@@ -13,10 +13,17 @@ function enrollment_status( $formid ) {
 	// Check if user is logged in.
 	$user_id = get_current_user_id();
 	if ($user_id == 0) {
-    	echo 'You are currently not logged in.';
+    	return;
 	} else {
-		$returnval = get_entries($formid, $search_criteria['field_filters'][] = array( 'key' => 'created_by', 'value' => $current_user->ID ));
-		return $returnval;
+		// Check if entry exists.
+		$returnval = GFAPI::get_entries($formid, $search_criteria['field_filters'][] = array( 'key' => 'created_by', 'value' => $current_user->ID ));
+		// Get form title for formid.
+		$forminfo = GFAPI::get_form($formid);
+		if (isset($returnval)) {
+			return $forminfo['title'] . ' complete!';
+		} else {
+			return $forminfo['title'] . 'not complete';
+		}
 	}
 }
 add_shortcode( 'enrollmentstatus', 'enrollment_status' );
