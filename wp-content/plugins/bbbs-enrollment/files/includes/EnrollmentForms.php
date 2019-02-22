@@ -9,9 +9,12 @@ class EnrollmentForms {
     }
 
     protected function retrieveEnrollmentForms() {
-        global $wpdb;
-        $rows = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}gf_form", ARRAY_A );
-        $this->forms = $rows;
+        //global $wpdb;
+        //$rows = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}gf_form", ARRAY_A );
+        $forms = GFAPI::get_forms();
+        $this->forms = $forms;
+
+
     }
 
     public function getForms() {
