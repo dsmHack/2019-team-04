@@ -22,7 +22,7 @@ function enrollment_status( $formid ) {
 		if (isset($returnval)) {
 			return $forminfo['title'] . ' complete!';
 		} else {
-			return $forminfo['title'] . 'not complete';
+			return $forminfo['title'] . ' not complete';
 		}
 	}
 }
