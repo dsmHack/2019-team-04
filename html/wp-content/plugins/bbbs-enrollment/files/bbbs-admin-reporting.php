@@ -147,6 +147,12 @@ function volunteer_reports_page() {
 
 function render_report_details($userEnrollment) {
 
+    $ef = new EnrollmentForms();
+    $forms = $ef->getAllForms();
+    $totalFormCount = count($forms);
+
+
+
     ?>
 
     <h1><?php echo $userEnrollment->getFirstName(); ?> <?php echo $userEnrollment->getLastName(); ?></h1>
@@ -165,6 +171,29 @@ function render_report_details($userEnrollment) {
         <label>Completed Form Count</label>
         <span><?php echo $userEnrollment->getUniqueCompletedFormCount(); ?></span>
     </p>
+
+    <h2>Form Status</h2>
+
+    <ul>
+        <?php foreach($forms as $form): ?>
+            <li style="list-style: square; margin-left: 15px;">
+                <?php $entryId = $userEnrollment->completedFormEntryId($form['id']); ?>
+
+                <?php if ($entryId !== false): ?>
+                    <a href="?page=gf_entries&view=entry&id=<?php echo $form['id']; ?>&lid=<?php echo $entryId; ?>&order=ASC&filter&paged=1&field_id&operator#"><?php echo $form['title']; ?></a>
+                <?php else: ?>
+                    <?php echo $form['title']; ?>
+                <?php endif; ?>
+
+
+                <?php if ($userEnrollment->hasCompletedForm($form['id'])): ?>
+                ✅
+                <?php else: ?>
+                ❌
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
     <p>
         <a href="?page=bbbs-reports" class="button button-primary">Return To Report</a>
