@@ -7,7 +7,7 @@ function bbbs_volunteer_menu() {
 function bbbs_add_volunteer_submenu() {
     add_submenu_page("bbbs-volunteer", "Dashboard", "Dashboard", "manage_options", "bbbs-volunteer", "volunteer_dashboard_page");
     add_submenu_page("bbbs-volunteer", "Reports", "Reports", "manage_options", "bbbs-reports", "volunteer_reports_page");
-    add_submenu_page("bbbs-volunteer", "Exports", "Exports", "manage_options", "bbbs-exports", "volunteer_exports_page");
+    add_submenu_page("bbbs-volunteer", "Support Videos", "Support Videos", "manage_options", "bbbs-support-videos", "bbbs_support_videos");
 }
 
 require_once(__DIR__ . "/includes/UserEnrollment.php");
@@ -239,6 +239,33 @@ function render_report_table($collection) {
         jQuery('#myTable').DataTable();
     } );
     </script>
+    <?php
+}
+
+function bbbs_support_videos() {
+
+    ?>
+
+    <h1>Admin Support Videos</h1>
+
+    <ul>
+        <li style="list-style: square; margin-left: 15px;">
+            <a href="https://drive.google.com/open?id=10mDaKm9lzuM6V562nHpf8u6oytMvpSpK" target="_blank">Intro</a>
+        <li>
+        <li style="list-style: square; margin-left: 15px;">
+            <a href="https://drive.google.com/open?id=1zfZhy2nKJsrWFR7F_U_BYCQcYkUEnsyZ" target="_blank">Gravity Form Modifications</a>
+        <li>
+        <li style="list-style: square; margin-left: 15px;">
+            <a href="https://drive.google.com/open?id=1OT2VHJlyQotTiqc7SjRTCfoDjQQ5lJIv" target="_blank">Entry Access and Reporting</a>
+        <li>
+        <li style="list-style: square; margin-left: 15px;">
+            <a href="https://drive.google.com/open?id=1AfbGCuZTtyCW3RKohYFKIGJBgloZO-Tl" target="_blank">Data Exporting</a>
+        <li>
+        <li style="list-style: square; margin-left: 15px;">
+            <a href="https://drive.google.com/open?id=1Sgr5C_hxn72yrJGbQ2MBgTFIZT9es237" target="_blank">Removing Users and Misc</a>
+        <li>
+    </ul>
+
     <?php
 }
 ?>
