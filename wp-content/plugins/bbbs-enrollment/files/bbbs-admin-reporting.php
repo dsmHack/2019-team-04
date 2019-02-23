@@ -71,8 +71,8 @@ function volunteer_reports_page() {
         <tr>
             <td><?php echo $userEnroll->getLastName(); ?></td>
             <td><?php echo $userEnroll->getFirstName(); ?></td>
-            <td><?php echo $userEnroll->getCreatedAt(); ?></td>
-            <td><?php echo $userEnroll->getLastUpdatedAt(); ?></td>
+            <td><?php $caDate = $userEnroll->getCreatedAt(); echo ($caDate) ? $caDate : "Not Defined"; ?></td>
+            <td><?php $luDate = $userEnroll->getLastUpdatedAt(); echo ($luDate) ? $luDate : "No Form Submissions";?></td>
             <td><?php echo $userEnroll->getUniqueCompletedFormCount(); ?></td>
         </tr>
         <?php endforeach; ?>
