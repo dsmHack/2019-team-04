@@ -25,6 +25,12 @@ class EnrollmentForms {
         },$this->forms);
     }
 
+    public function getAllFormIDs() {
+        return array_map(function($cur) {
+            return $cur['id'];
+        },$this->forms);
+    }
+
     public function getVolunteerForms() {
         return array_reduce($this->forms,function($acc,$cur) {
 
