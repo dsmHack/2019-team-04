@@ -38,3 +38,6 @@ ansible-playbook -i hosts.ini install_certbot.yaml
 # Enrollment Status Shortcode
 `[enrollmentstatus]`  
 This shortcode can be added to a page to see a list of all active forms with a link to any form that has not been completed. Works for currently logged in user.
+
+# Front page content
+Front page content can be changed by altering the `landing.php` file in the understrap theme. In the UI, this can be changed by navigating to the theme editor, expanding the page-templates drop-down in the list of templates on the right side of the page, and changing the text in the template.
