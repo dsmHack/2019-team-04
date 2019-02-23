@@ -21,72 +21,63 @@ function volunteer_dashboard_page() {
 
 function volunteer_reports_page() {
 
-    /*
-        user
-        first name
-        last name
-        started
-        last updated
-        Forms remaining
-    */
-
-    //$users = get_users(array("role"=>"Volunteer"));
-    //$users = get_users(array("role"=>"um_volunteer"));
-
-    //$userEnrollment = new UserEnrollment("1");
-    //var_dump($userEnrollment->getUniqueCompletedFormCount());
+    $detailsUserId = (isset($_GET['id']) && is_numeric($_GET['id'])) ? $_GET['id'] : null;
 
 
+    if ($detailsUserId) {
+        //echo "details";
+        $userEnrollment = new UserEnrollment($detailsUserId);
+        render_report_details($userEnrollment);
+    } else {
+        $ec = new EnrollmentCollection();
+        $enrolls = $ec->allEnrollments();
+        render_report_table($enrolls);
+    }
 
-    $ec = new EnrollmentCollection();
-    $enrolls = $ec->allEnrollments();
+}
 
-    //echo "<pre>";
-    //var_dump($userEnrollment);
+function render_report_details($userEnrollment) {
 
-    //var_dump(count($enrolls));
-    //var_dump($enrolls);
+    var_dump($userEnrollment);
+}
 
-    //var_dump($users);
-    //echo "</pre>";
+function render_report_table($collection) {
 
+    $headers = array("Last Name", "First Name", "Enrollment Date", "Latest Update On", "Forms Completed","&nbsp;");
 
-    $headers = array("Last Name", "First Name", "Enrollment Date", "Latest Update On", "Forms Completed");
+    ?>
+    <h2>BBBS Volunteer Reports</h2>
+    <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
-?>
-<h2>BBBS Volunteer Reports</h2>
-<link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-
-<table id="myTable">
-    <thead>
-        <tr>
-            <?php foreach($headers as $header): ?>
-            <th><?php echo $header; ?></th>
+    <table id="myTable">
+        <thead>
+            <tr>
+                <?php foreach($headers as $header): ?>
+                <th><?php echo $header; ?></th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($collection as $userEnroll): ?>
+            <tr>
+                <td><?php echo $userEnroll->getLastName(); ?></td>
+                <td><?php echo $userEnroll->getFirstName(); ?></td>
+                <td><?php $caDate = $userEnroll->getCreatedAt(); echo ($caDate) ? $caDate : "Not Defined"; ?></td>
+                <td><?php $luDate = $userEnroll->getLastUpdatedAt(); echo ($luDate) ? $luDate : "No Form Submissions";?></td>
+                <td><?php echo $userEnroll->getUniqueCompletedFormCount(); ?></td>
+                <td><a href="?page=bbbs-reports&id=<?php echo $userEnroll->getId(); ?>">Details</a></td>
+            </tr>
             <?php endforeach; ?>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach($enrolls as $userEnroll): ?>
-        <tr>
-            <td><?php echo $userEnroll->getLastName(); ?></td>
-            <td><?php echo $userEnroll->getFirstName(); ?></td>
-            <td><?php $caDate = $userEnroll->getCreatedAt(); echo ($caDate) ? $caDate : "Not Defined"; ?></td>
-            <td><?php $luDate = $userEnroll->getLastUpdatedAt(); echo ($luDate) ? $luDate : "No Form Submissions";?></td>
-            <td><?php echo $userEnroll->getUniqueCompletedFormCount(); ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
 
-<script type="text/javascript">
-jQuery(document).ready( function () {
-    jQuery('#myTable').DataTable();
-} );
-</script>
-<?php
-
-
+    <script type="text/javascript">
+    jQuery(document).ready( function () {
+        jQuery('#myTable').DataTable();
+    } );
+    </script>
+    <?php
 }
 ?>

@@ -114,6 +114,9 @@ class UserEnrollment {
 
     }
 
+    public function getId() {
+        return $this->userId;
+    }
 
     public function getFirstName() {
         return $this->firstName;
