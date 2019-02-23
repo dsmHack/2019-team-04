@@ -169,7 +169,15 @@ function render_report_details($userEnrollment) {
     <ul>
         <?php foreach($forms as $form): ?>
             <li style="list-style: square; margin-left: 15px;">
-                <?php echo $form['title']; ?>
+                <?php $entryId = $userEnrollment->completedFormEntryId($form['id']); ?>
+
+                <?php if ($entryId !== false): ?>
+                    <a href="?page=gf_entries&view=entry&id=<?php echo $form['id']; ?>&lid=<?php echo $entryId; ?>&order=ASC&filter&paged=1&field_id&operator#"><?php echo $form['title']; ?></a>
+                <?php else: ?>
+                    <?php echo $form['title']; ?>
+                <?php endif; ?>
+
+
                 <?php if ($userEnrollment->hasCompletedForm($form['id'])): ?>
                 ✅
                 <?php else: ?>
