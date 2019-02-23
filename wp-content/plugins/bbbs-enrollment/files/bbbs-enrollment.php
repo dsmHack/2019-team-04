@@ -13,9 +13,6 @@ function enrollment_status() {
 	$user = wp_get_current_user();
 	if ($user_id == 0) {
     	return;
-	} elseif (!in_array( 'volunteer', (array) $user->roles )) {
-    //The user has the "author" role
-		echo '<p>Non-volunteer role text</p>';
 	} else {
 		// Get all form ids.
 		$enrollForms = new EnrollmentForms();
@@ -32,11 +29,13 @@ function enrollment_status() {
 		// showing whether or not each has an entry.
 		$allForms = $enrollForms->getAllForms();
 		foreach($allForms as $form) {
-			if (in_array($form['id'], $missingforms)) {
-				echo "<h2>" . $form['title'] . " ❌</h2>";
-			}
-			else {
-				echo "<h2>" . $form['title'] . " ✅</h2>";
+			if ($form['is_active']) {
+				if (in_array($form['id'], $missingforms)) {
+					echo "<h2>" . $form['title'] . " ❌</h2>";
+				}
+				else {
+					echo "<h2>" . $form['title'] . " ✅</h2>";
+				}
 			}
 		}
 	}
