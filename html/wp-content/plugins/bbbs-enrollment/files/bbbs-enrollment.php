@@ -38,6 +38,7 @@ function enrollment_status() {
 				// @see gf-form-locator plugin
 				$formlocations = Form_Locations_Table::get_locations();
 				$formlocationids = array_column($formlocations, 'form_id');
+
 				// If the form id doesn't have an active entry.
 				if (in_array($form['id'], $missingforms)) {
 					// If the form id has a form location.
@@ -52,6 +53,7 @@ function enrollment_status() {
 					// If the form doesn't have a location, just print the form title.
 					else {
 						echo "<li>" . $form['title'] . " ❌</li>";
+
 					}
 				}
 				// If the form has an entry, give a friendly checkbox.
