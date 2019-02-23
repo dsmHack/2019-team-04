@@ -9,174 +9,199 @@ function bbbs_add_volunteer_submenu() {
     add_submenu_page("bbbs-volunteer", "BBBS Reports", "BBBS Reports", "manage_options", "bbbs-reports", "volunteer_reports_page");
 }
 
+
+require_once(__DIR__ . "/includes/UserEnrollment.php");
+require_once(__DIR__ . "/includes/EnrollmentCollection.php");
+require_once(__DIR__ . "/includes/EnrollmentForms.php");
+
 function volunteer_dashboard_page() {
-?>
-<h2>BBBS Volunteer Dashboard</h2>
-<?php
+    $volunteersFinished = 0;
+    $applicationCompleted = 0;
+    $volunteersEnrollDate = [];
+
+    $ec = new EnrollmentCollection();
+    $enrolled = $ec->allEnrollments();
+
+    $ef = new EnrollmentForms();
+    $totalFormCount = count($ef->getAllForms());
+
+    foreach ($enrolled as $e) {
+        $completedForms = $e->getCompletedForms();
+        foreach ($completedForms as $c) {
+            $form = $ef->getFormById($c["form_id"]);
+            if ($form["title"] == "Volunteer Application") {
+                $applicationCompleted++;
+                break;
+            }
+        }
+
+        if (count($completedForms) == $totalFormCount) {
+            $volunteersFinished++;
+        }
+
+        array_push($volunteersEnrollDate, $e->getCreatedAt('U'));
+    }
+    ?>
+    <style type="text/css">
+        .vol-dash-metric {
+            font-size: 16px;
+            float: left;
+            width: 30%;
+            border-left: 4px solid #AAA;
+            padding-left: 10px;
+        }
+        .vol-graph-header {
+            font-size: 14px;
+            margin-top: 30px;
+            border-bottom: 1px solid #AAA;
+            padding: 7px 3px;
+            float: left;
+            clear: both;
+        }
+
+        #vol-enroll-chart-container {
+            width: 80%;
+        }
+    </style>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+    <h1>BBBS Volunteer Dashboard</h1>
+    <h4 class="vol-dash-metric"><?=count($enrolled)?> Enrolled Volunteers</h4>
+    <h4 class="vol-dash-metric"><?=$applicationCompleted?> Volunteer Applications Completed</h4>
+    <h4 class="vol-dash-metric"><?=$volunteersFinished?> Finished Volunteers</h4>
+    
+    <h5 class="vol-graph-header">Volunteers Enrolled By Day (last week)</h5>
+    <div id="vol-enroll-chart-container"><canvas id="vol-enroll-chart" width="400" height="100"></canvas></div>
+
+    <script type="text/javascript">
+        jQuery(document).ready( function () {
+            build_enrollment_chart();
+        } );
+
+        function build_enrollment_chart() {
+            var enrolled_users = JSON.parse('<?=json_encode($volunteersEnrollDate)?>');
+  
+            var now = moment();
+            var beginning = now.subtract(1, 'weeks').startOf('day');
+            
+            var buckets = [];
+            for (var x = 0;x <= 7; x++) {
+                var d = moment(beginning).add(x, 'day').endOf('day');
+                buckets.push({ 'date': d, 'ts': d.unix(), 'count': 0 });
+            }
+
+            enrolled_users.forEach(u => {
+                for (var x = 0;x < buckets.length;x++) {
+                    if (u > buckets[x]['ts']) {
+                        if (x >= buckets.length || u <= buckets[x + 1]['ts']) {
+                            buckets[x]['count']++;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            var chartData = { labels: [], datasets: [ { label: '# of Enrolled Volunteers', data: [], backgroundColor: [] } ] };
+            for (var x = 0;x < buckets.length - 1;x++) {
+                chartData['labels'].push(buckets[x]['date'].add(12, 'hours').format('ddd M/D'));
+                chartData['datasets'][0]['data'].push(buckets[x]['count']);
+                chartData['datasets'][0]['backgroundColor'].push('rgba(54, 162, 235, 0.2)');
+            }
+
+            var ctx = document.getElementById("vol-enroll-chart");
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: chartData
+            });
+        }
+    </script>
+    <?php
 }
 
 function volunteer_reports_page() {
-?>
-<h2>BBBS Volunteer Reports</h2>
-<?php
 
-class Form_List_Table extends WP_List_Table {
+    $detailsUserId = (isset($_GET['id']) && is_numeric($_GET['id'])) ? $_GET['id'] : null;
 
-    /**
-     * Constructor, we override the parent to pass our own arguments
-     * We usually focus on three parameters: singular and plural labels, as well as whether the class supports AJAX.
-     */
-    function __construct() {
-        parent::__construct( array(
-       'singular'=> 'wp_list_text_link', //Singular label
-       'plural' => 'wp_list_test_links', //plural label, also this well be one of the table css class
-       'ajax'   => false //We won't support Ajax for this table
-       ) );
+
+    if ($detailsUserId) {
+        //echo "details";
+        $userEnrollment = new UserEnrollment($detailsUserId);
+        render_report_details($userEnrollment);
+    } else {
+        $ec = new EnrollmentCollection();
+        $enrolls = $ec->allEnrollments();
+        render_report_table($enrolls);
     }
 
-    function extra_tablenav( $which ) {
-        if ( $which == "top" ){
-        //The code that goes before the table is here
-        echo"Hello, I'm before the table";
-        }
-        if ( $which == "bottom" ){
-        //The code that goes after the table is there
-        echo"Hi, I'm after the table";
-        }
-    }
+}
 
-    function get_columns() {
-        return $columns= array(
-        'col_form_id'=>__('ID'),
-        'col_form_name'=>__('Name')
-        );
-    }
- 
-    public function get_sortable_columns() {
-        return $sortable = array(
-           'col_form_id'=>'id',
-           'col_form_name'=>'title'
-        );
-     }
+function render_report_details($userEnrollment) {
 
-     /**
-     * Prepare the table with different parameters, pagination, columns and table elements
-     */
-    function prepare_items() {
-        global $wpdb, $_wp_column_headers;
-        $screen = get_current_screen();
-    
-        /* -- Preparing your query -- */
-            //$query = "SELECT * FROM {$wpdb->prefix}gf_form";
+    ?>
 
-            $data = array(
-                array("id"=>1,"title"=>"My Title 1"),
-                array("id"=>2,"title"=>"My Title 2"),
-                array("id"=>3,"title"=>"My Title 3"),
-                array("id"=>4,"title"=>"My Title 4"),
-                array("id"=>5,"title"=>"My Title 5"),
-                array("id"=>6,"title"=>"My Title 6"),
-                array("id"=>7,"title"=>"My Title 7"),
-            );
-    
-        /* -- Ordering parameters -- */
-            //Parameters that are going to be used to order the result
-            /*
-            $orderby = !empty($_GET["orderby"]) ? mysql_real_escape_string($_GET["orderby"]) : '';
-            $order = !empty($_GET["order"]) ? mysql_real_escape_string($_GET["order"]) : 'ASC';
-            if(!empty($orderby) & !empty($order)){ $query.=' ORDER BY '.$orderby.' '.$order; }
-            */
-    
-        /* -- Pagination parameters -- */
-            //Number of elements in your table?
-            //$totalitems = $wpdb->query($query); //return the total number of affected rows
-            $totalitems = count($data);
-            //How many to display per page?
-            $perpage = 5;
-            //Which page is this?
-            $paged = !empty($_GET["paged"]) ? $_GET["paged"] : 1;
-            //Page Number
-            
-            if(empty($paged) || !is_numeric($paged) || $paged<=0 ){ $paged=1; } //How many pages do we have in total?  //adjust the query to take pagination into account if(!empty($paged) && !empty($perpage)){ $offset=($paged-1)*$perpage; $query.=' LIMIT '.(int)$offset.','.(int)$perpage; } 
+    <h1><?php echo $userEnrollment->getFirstName(); ?> <?php echo $userEnrollment->getLastName(); ?></h1>
 
-            $totalpages = ceil($totalitems/$perpage);
+    <p>
+        <label>Accounted Created On</label>
+        <span><?php $caDate = $userEnrollment->getCreatedAt(); echo ($caDate) ? $caDate : "Not Created"; ?></span>
+    </p>
 
-            /* -- Register the pagination -- */ 
-            $this->set_pagination_args( array(
-                "total_items" => $totalitems,
-                "total_pages" => $totalpages,
-                "per_page" => $perpage,
-            ) );
-        //The pagination links are automatically built according to those parameters
-    
-        /* -- Register the Columns -- */
-        $columns = $this->get_columns();
-        $_wp_column_headers[$screen->id]=$columns;
+    <p>
+        <label>Last Update On</label>
+        <span><?php $luDate = $userEnrollment->getLastUpdatedAt(); echo ($luDate) ? $luDate : "No Form Submissions";?></span>
+    </p>
 
-        $this->_column_headers = array($columns);
-    
-        /* -- Fetch the items -- */
-        //$this->items = $wpdb->get_results($query);
-        $this->items = $data;
-    }
+    <p>
+        <label>Completed Form Count</label>
+        <span><?php echo $userEnrollment->getUniqueCompletedFormCount(); ?></span>
+    </p>
 
-    /**
-     * Display the rows of records in the table
-     * @return string, echo the markup of the rows
-     */
-    //function display_rows() {
+    <p>
+        <a href="?page=bbbs-reports" class="button button-primary">Return To Report</a>
+    </p>
 
-        //Get the records registered in the prepare_items method
-        /*
-        $records = $this->items;
+    <?php
+}
 
-    
-        //Get the columns registered in the get_columns and get_sortable_columns methods
-        list( $columns, $hidden ) = $this->get_column_info();
-    
-        //Loop for each record
-        if(!empty($records)) {
-            foreach($records as $rec){
+function render_report_table($collection) {
 
-                var_dump($rec);
-    
-            //Open the line
-            echo '<tr id="record_'.$rec->id.'">';
-            foreach ( $columns as $column_name => $column_display_name ) {
+    $headers = array("Last Name", "First Name", "Enrollment Date", "Latest Update On", "Forms Completed","&nbsp;");
 
-    
-                //Style attributes for each col
-                $class = "class='$column_name column-$column_name'";
-                $style = "";
-                if ( in_array( $column_name, $hidden ) ) $style = ' style="display:none;"';
-                $attributes = $class . $style;
-        
-                //edit link
-                $editlink  = '/wp-admin/link.php?action=edit&link_id='.(int)$rec->form_id;
-        
-                //Display the cell
-                switch ( $column_name ) {
-                    case "col_form_id":  echo '< td '.$attributes.'>'.stripslashes($rec->form_id).'< /td>';   break;
-                    case "col_form_title": echo '< td '.$attributes.'>'.stripslashes($rec->link_title).'< /td>'; break;
-                }
-            }
-    
-            //Close the line
-            echo'< /tr>';
-        }}
-        */
-    //}
- 
- }
+    ?>
+    <h2>BBBS Volunteer Reports</h2>
+    <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
- 
- //Prepare Table of elements
-$wp_list_table = new Form_List_Table();
-$wp_list_table->prepare_items();
- //Table of elements
-$wp_list_table->display(); 
+    <table id="myTable">
+        <thead>
+            <tr>
+                <?php foreach($headers as $header): ?>
+                <th><?php echo $header; ?></th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($collection as $userEnroll): ?>
+            <tr>
+                <td><?php echo $userEnroll->getLastName(); ?></td>
+                <td><?php echo $userEnroll->getFirstName(); ?></td>
+                <td><?php $caDate = $userEnroll->getCreatedAt(); echo ($caDate) ? $caDate : "Not Defined"; ?></td>
+                <td><?php $luDate = $userEnroll->getLastUpdatedAt(); echo ($luDate) ? $luDate : "No Form Submissions";?></td>
+                <td><?php echo $userEnroll->getUniqueCompletedFormCount(); ?></td>
+                <td><a href="?page=bbbs-reports&id=<?php echo $userEnroll->getId(); ?>">Details</a></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 
 
-
+    <script type="text/javascript">
+    jQuery(document).ready( function () {
+        jQuery('#myTable').DataTable();
+    } );
+    </script>
+    <?php
 }
 ?>

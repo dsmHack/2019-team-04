@@ -1,0 +1,34 @@
+---
+- name: "Install letsencrypt with a cert for the bbbs site"
+  hosts: bbbsia
+  become: true
+  vars:
+    certbot_admin_email: info@bbbsia.org
+    certbot_create_if_missing: true
+    certbot_create_standalone_stop_services:
+      - bitnami
+    certbot_certs:
+      - domains:
+          - volunteers.bbbsia.org
+  roles:
+    - geerlingguy.certbot
+  tasks:
+    - name: "Update WP_SITEURL in wp-config to point to https"
+      replace:
+        path: /opt/bitnami/apps/wordpress/htdocs/wp-config.php
+        regexp: '(define.*WP_SITEURL.*)http://(.*)'
+        replace: '\1https://\2'
+    - name: "Update WP_HOME in wp-config to point to https"
+      replace:
+        path: /opt/bitnami/apps/wordpress/htdocs/wp-config.php
+        regexp: '(define.*WP_HOME.*)http://(.*)'
+        replace: '\1https://\2'
+    - name: "Enable Apache Redirects"
+      blockinfile:
+        path: /opt/bitnami/apps/wordpress/conf/httpd-prefix.conf
+        insertbefore: BOF
+        block: |
+          RewriteEngine On
+          RewriteCond %{HTTPS} !=on
+          RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [R,L]
+

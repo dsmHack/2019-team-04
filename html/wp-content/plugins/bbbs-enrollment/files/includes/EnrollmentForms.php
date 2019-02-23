@@ -31,6 +31,15 @@ class EnrollmentForms {
         },$this->forms);
     }
 
+    public function getFormById($formId) {
+        foreach ($this->forms as $f) {
+            if ($f["id"] == $formId) {
+                return $f;
+            }
+        }
+        return null;
+    }
+
     public function getVolunteerForms() {
         return array_reduce($this->forms,function($acc,$cur) {
 
