@@ -16,6 +16,7 @@ $container = get_theme_mod( 'understrap_container_type' );
 
 <?php get_template_part( 'sidebar-templates/sidebar', 'footerfull' ); ?>
 
+<footer class="bbbs-footer">
 <div class="wrapper" id="wrapper-footer">
 
 	<div class="<?php echo esc_attr( $container ); ?>">
@@ -27,9 +28,7 @@ $container = get_theme_mod( 'understrap_container_type' );
 				<footer class="site-footer" id="colophon">
 
 					<div class="site-info">
-
-						<?php understrap_site_info(); ?>
-
+						<p>©2019 Big Brothers Big Sisters of Central Iowa. 9051 Swanson Blvd, Clive, IA 50325</p>
 					</div><!-- .site-info -->
 
 				</footer><!-- #colophon -->
@@ -45,8 +44,7 @@ $container = get_theme_mod( 'understrap_container_type' );
 </div><!-- #page we need this extra closing tag here -->
 
 <?php wp_footer(); ?>
-
+</footer>
 </body>
 
 </html>
-
