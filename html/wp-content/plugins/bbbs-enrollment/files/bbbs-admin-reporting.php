@@ -15,12 +15,14 @@ require_once(__DIR__ . "/includes/EnrollmentCollection.php");
 require_once(__DIR__ . "/includes/EnrollmentForms.php");
 
 function volunteer_dashboard_page() {
+    $volunteersFinished = 0;
     $applicationCompleted = 0;
 
     $ec = new EnrollmentCollection();
     $enrolled = $ec->allEnrollments();
 
     $ef = new EnrollmentForms();
+    $totalFormCount = count($ef->getAllForms());
 
     foreach ($enrolled as $e) {
         $completedForms = $e->getCompletedForms();
@@ -28,7 +30,12 @@ function volunteer_dashboard_page() {
             $form = $ef->getFormById($c["form_id"]);
             if ($form["title"] == "Volunteer Application") {
                 $applicationCompleted++;
+                break;
             }
+        }
+
+        if (count($completedForms) == $totalFormCount) {
+            $volunteersFinished++;
         }
     }
 
@@ -38,10 +45,11 @@ function volunteer_dashboard_page() {
             font-size: 16px;
         }
     </style>
-    
+
     <h1>BBBS Volunteer Dashboard</h1>
     <h4 class="vol-dash-metric"><?=count($enrolled)?> Enrolled Volunteers</h4>
     <h4 class="vol-dash-metric"><?=$applicationCompleted?> Volunteer Applications Completed</h4>
+    <h4 class="vol-dash-metric"><?=$volunteersFinished?> Finished Volunteers</h4>
     <?php
 }
 
