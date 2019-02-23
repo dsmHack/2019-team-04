@@ -43,13 +43,36 @@ function volunteer_dashboard_page() {
     <style type="text/css">
         .vol-dash-metric {
             font-size: 16px;
+            float: left;
+            width: 30%;
+            border-left: 4px solid #AAA;
+            padding-left: 10px;
+        }
+        .vol-graph-header {
+            font-size: 14px;
+            margin-top: 30px;
+            border-bottom: 1px solid #AAA;
+            padding: 7px 3px;
+            float: left;
+            clear: both;
         }
     </style>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
 
     <h1>BBBS Volunteer Dashboard</h1>
     <h4 class="vol-dash-metric"><?=count($enrolled)?> Enrolled Volunteers</h4>
     <h4 class="vol-dash-metric"><?=$applicationCompleted?> Volunteer Applications Completed</h4>
     <h4 class="vol-dash-metric"><?=$volunteersFinished?> Finished Volunteers</h4>
+    
+    <h5 class="vol-graph-header">Volunteers Enrolled By Day (last week)</h5>
+    <canvas id="vol-enroll-chart" width="400" height="400"></canvas>
+
+    <script type="text/javascript">
+        jQuery(document).ready( function () {
+            alert('hello');
+        } );
+    </script>
     <?php
 }
 
