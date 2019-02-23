@@ -15,3 +15,5 @@ wp-config.php
 *.Trashes
 
 dbdata/
+
+html/wp-content/ai1wm-backups/

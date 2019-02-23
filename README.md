@@ -34,3 +34,24 @@ Run the ansible scripts (the site will be temporarily online while it fetches th
 ```
 ansible-playbook -i hosts.ini install_certbot.yaml
 ```
+
+
+# Restoring from DB backup
+
+Install a MySQL viewer, SequelPro for instance
+
+Connect to your database using the credsn found in `stack.yml`
+```
+url: localhost
+user: root
+pw: ass123
+```
+
+In your MySQL toolbox of choice import the most recent .sqldmp file found in `/dumps/`
+
+Once DB is imported you may have to run the following SQL to update the local database to deal with redirects
+
+```
+update wp_options set option_value='http://localhost:8080/' where option_name='siteurl';
+update wp_options set option_value='http://localhost:8080/' where option_name='home';
+```
