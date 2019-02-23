@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 
-	</header><!-- .entry-header -->
+	</header>
 
 	<?php echo get_the_post_thumbnail( $post->ID, 'large' ); ?>
 
@@ -33,12 +33,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		);
 		?>
 
-	</div><!-- .entry-content -->
+	</div>
 
 	<footer class="entry-footer">
 
 		<?php edit_post_link( __( 'Edit', 'understrap' ), '<span class="edit-link">', '</span>' ); ?>
 
-	</footer><!-- .entry-footer -->
+	</footer>
 
-</article><!-- #post-## -->
+</article>
