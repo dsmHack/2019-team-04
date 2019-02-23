@@ -41,15 +41,17 @@ function volunteer_reports_page() {
     $ec = new EnrollmentCollection();
     $enrolls = $ec->allEnrollments();
 
-    echo "<pre>";
+    //echo "<pre>";
     //var_dump($userEnrollment);
 
-    var_dump(count($enrolls));
-    var_dump($enrolls);
+    //var_dump(count($enrolls));
+    //var_dump($enrolls);
 
     //var_dump($users);
-    echo "</pre>";
+    //echo "</pre>";
 
+
+    $headers = array("Last Name", "First Name", "Enrollment Date", "Latest Update On", "Forms Completed");
 
 ?>
 <h2>BBBS Volunteer Reports</h2>
@@ -59,27 +61,21 @@ function volunteer_reports_page() {
 <table id="myTable">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Step</th>
+            <?php foreach($headers as $header): ?>
+            <th><?php echo $header; ?></th>
+            <?php endforeach; ?>
         </tr>
     </thead>
     <tbody>
+        <?php foreach($enrolls as $userEnroll): ?>
         <tr>
-            <td>1</td>
-            <td>John Doe</td>
-            <td>Step 3</td>
+            <td><?php echo $userEnroll->getLastName(); ?></td>
+            <td><?php echo $userEnroll->getFirstName(); ?></td>
+            <td><?php echo $userEnroll->getCreatedAt(); ?></td>
+            <td><?php echo $userEnroll->getLastUpdatedAt(); ?></td>
+            <td><?php echo $userEnroll->getUniqueCompletedFormCount(); ?></td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>Jane Smith</td>
-            <td>Step 1</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Bob Rob</td>
-            <td>Step 1</td>
-        </tr>
+        <?php endforeach; ?>
     </tbody>
 </table>
 

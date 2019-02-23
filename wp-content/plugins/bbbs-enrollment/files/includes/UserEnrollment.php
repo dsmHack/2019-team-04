@@ -124,11 +124,11 @@ class UserEnrollment {
     }
 
     public function getCreatedAt($format = "Y-m-d H:i:s") {
-        return date($format,strtotime($this->createdAt));
+        return ($this->createdAt) ? date($format,strtotime($this->createdAt)) : null;
     }
 
     public function getLastUpdatedAt($format = "Y-m-d H:i:s") {
-        return date($format,strtotime($this->lastUpdatedAt));
+        return ($this->lastUpdatedAt) ? date($format,strtotime($this->lastUpdatedAt)) : null;
     }
 
     public function getUniqueCompletedFormCount() {
