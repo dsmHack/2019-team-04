@@ -33,26 +33,25 @@ $container = get_theme_mod( 'understrap_container_type' );
       <div class="row">
       <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-          {% include icons/placeholder.svg width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" %}
-           <img source=<?php wp_get_attachment_image_src(22)?>/>
+          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/50771904_10157025737594630_2865750871658987520_n-Copy-Copy.jpg">
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text">Take part in fun activites!</p>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-            {% include icons/placeholder.svg width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" %}
+          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/50771904_10157025737594630_2865750871658987520_n-Copy-Copy.jpg">
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text">Take part in fun activites!</p>
             </div>
           </div>
-        </div>
+        </div>    
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-            {% include icons/placeholder.svg width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" %}
+          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/50771904_10157025737594630_2865750871658987520_n-Copy-Copy.jpg">
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text">Take part in fun activites!</p>
             </div>
           </div>
         </div>
