@@ -34,3 +34,7 @@ Run the ansible scripts (the site will be temporarily online while it fetches th
 ```
 ansible-playbook -i hosts.ini install_certbot.yaml
 ```
+
+# Enrollment Status Shortcode
+`[enrollmentstatus]`
+This shortcode can be added to a page to see a list of all active forms with a link to any form that has not been completed. Works for currently logged in user.
