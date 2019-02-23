@@ -30,13 +30,15 @@ function enrollment_status() {
 		// showing whether or not each has an entry.
 		$allForms = $enrollForms->getAllForms();
 
+		echo "<ul id=\"form-progress-list\" >";
+
 		foreach($allForms as $form) {
 			if ($form['is_active']) {
 				// Fetch all form locations from the gf form locator table.
 				// @see gf-form-locator plugin
 				$formlocations = Form_Locations_Table::get_locations();
 				$formlocationids = array_column($formlocations, 'form_id');
-				
+
 				// If the form id doesn't have an active entry.
 				if (in_array($form['id'], $missingforms)) {
 					// If the form id has a form location.
@@ -46,19 +48,21 @@ function enrollment_status() {
 						$postid = $formlocations[$key]['post_id'];
 						$formurl = get_permalink($postid);
 
-						echo "<h2><a href=\"" . $formurl . "\" >" . $form['title'] . " ❌</a></h2>";
+						echo "<li><a href=\"" . $formurl . "\" >" . $form['title'] . " ❌</a></li>";
 					}
 					// If the form doesn't have a location, just print the form title.
 					else {
-						echo "<h2>" . $form['title'] . " ❌</h2>";
+						echo "<li>" . $form['title'] . " ❌</li>";
+
 					}
 				}
 				// If the form has an entry, give a friendly checkbox.
 				else {
-					echo "<h2>" . $form['title'] . " ✅</h2>";
+					echo "<li>" . $form['title'] . " ✅</li>";
 				}
 			}
 		}
+		echo "</ul>";
 	}
 }
 add_shortcode( 'enrollmentstatus', 'enrollment_status' );
