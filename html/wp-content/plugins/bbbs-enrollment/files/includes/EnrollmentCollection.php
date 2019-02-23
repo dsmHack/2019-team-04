@@ -12,10 +12,14 @@ class EnrollmentCollection {
 
     public function allEnrollments() {
         $users = get_users(array("role"=> $this->volunteer_role));
-        // $users = get_users();
 
-        return array_map(function($user) {
-            return new UserEnrollment($user);
-        },$users);
+        return array_reduce($users,function($acc,$user) {
+            $status = get_user_meta($user->ID,"account_status");
+
+            if ($status[0] != "inactive") {
+                $acc[] = new UserEnrollment($user);
+            }
+            return $acc;
+        },array());
     }
 }
