@@ -30,6 +30,7 @@ function enrollment_status() {
 		// showing whether or not each has an entry.
 		$allForms = $enrollForms->getAllForms();
 
+		ob_start();
 		echo "<ul id=\"form-progress-list\" >";
 
 		foreach($allForms as $form) {
@@ -63,6 +64,7 @@ function enrollment_status() {
 			}
 		}
 		echo "</ul>";
+		return ob_get_clean();
 	}
 }
 add_shortcode( 'enrollmentstatus', 'enrollment_status' );

@@ -8,7 +8,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 $container = get_theme_mod( 'understrap_container_type' );
@@ -29,19 +29,19 @@ $container = get_theme_mod( 'understrap_container_type' );
 
 					<div class="site-info">
 						<p>©2019 Big Brothers Big Sisters of Central Iowa. 9051 Swanson Blvd, Clive, IA 50325</p>
-					</div><!-- .site-info -->
+					</div>
 
-				</footer><!-- #colophon -->
+				</footer>
 
-			</div><!--col end -->
+			</div>
 
-		</div><!-- row end -->
+		</div>
 
-	</div><!-- container end -->
+	</div>
 
-</div><!-- wrapper end -->
+</div>
 
-</div><!-- #page we need this extra closing tag here -->
+</div>
 
 <?php wp_footer(); ?>
 </footer>

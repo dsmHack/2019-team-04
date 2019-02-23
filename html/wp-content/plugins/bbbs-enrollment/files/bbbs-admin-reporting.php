@@ -5,14 +5,22 @@ function bbbs_volunteer_menu() {
 }
 
 function bbbs_add_volunteer_submenu() {
-    add_submenu_page("bbbs-volunteer", "BBBS Dashboard", "BBBS Dashboard", "manage_options", "bbbs-volunteer", "volunteer_dashboard_page");
-    add_submenu_page("bbbs-volunteer", "BBBS Reports", "BBBS Reports", "manage_options", "bbbs-reports", "volunteer_reports_page");
+    add_submenu_page("bbbs-volunteer", "Dashboard", "Dashboard", "manage_options", "bbbs-volunteer", "volunteer_dashboard_page");
+    add_submenu_page("bbbs-volunteer", "Reports", "Reports", "manage_options", "bbbs-reports", "volunteer_reports_page");
+    add_submenu_page("bbbs-volunteer", "Exports", "Exports", "manage_options", "bbbs-exports", "volunteer_exports_page");
 }
-
 
 require_once(__DIR__ . "/includes/UserEnrollment.php");
 require_once(__DIR__ . "/includes/EnrollmentCollection.php");
 require_once(__DIR__ . "/includes/EnrollmentForms.php");
+
+function volunteer_exports_page() {
+    ?>
+    <script type="text/javascript">
+    window.location = '/wp-admin/admin.php?page=gf_settings&subview=gforms-export-entries';
+    </script>
+    <?php
+}
 
 function volunteer_dashboard_page() {
     $volunteersFinished = 0;
@@ -107,7 +115,7 @@ function volunteer_dashboard_page() {
             for (var x = 0;x < buckets.length - 1;x++) {
                 chartData['labels'].push(buckets[x]['date'].add(12, 'hours').format('ddd M/D'));
                 chartData['datasets'][0]['data'].push(buckets[x]['count']);
-                chartData['datasets'][0]['backgroundColor'].push('rgba(54, 162, 235, 0.2)');
+                chartData['datasets'][0]['backgroundColor'].push('rgba(66, 158, 244, 0.2)');
             }
 
             var ctx = document.getElementById("vol-enroll-chart");
