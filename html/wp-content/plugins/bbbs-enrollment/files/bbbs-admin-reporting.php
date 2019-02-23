@@ -38,7 +38,30 @@ function volunteer_reports_page() {
 
 function render_report_details($userEnrollment) {
 
-    var_dump($userEnrollment);
+    ?>
+
+    <h1><?php echo $userEnrollment->getFirstName(); ?> <?php echo $userEnrollment->getLastName(); ?></h1>
+
+    <p>
+        <label>Accounted Created On</label>
+        <span><?php $caDate = $userEnrollment->getCreatedAt(); echo ($caDate) ? $caDate : "Not Created"; ?></span>
+    </p>
+
+    <p>
+        <label>Last Update On</label>
+        <span><?php $luDate = $userEnrollment->getLastUpdatedAt(); echo ($luDate) ? $luDate : "No Form Submissions";?></span>
+    </p>
+
+    <p>
+        <label>Completed Form Count</label>
+        <span><?php echo $userEnrollment->getUniqueCompletedFormCount(); ?></span>
+    </p>
+
+    <p>
+        <a href="?page=bbbs-reports" class="button button-primary">Return To Report</a>
+    </p>
+
+    <?php
 }
 
 function render_report_table($collection) {
