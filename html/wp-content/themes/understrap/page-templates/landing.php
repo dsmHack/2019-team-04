@@ -18,7 +18,7 @@ $container = get_theme_mod( 'understrap_container_type' );
 <head>
 <style>
   .jumbotron {
-    background-image: url("https://volunteers.bbbsia.org/wp-content/uploads/2019/02/BBBS_Interactions010_Maurice-Malachi.jpg");
+    background-image: url("https://volunteers.bbbsia.org/wp-content/uploads/2019/02/BBBS_Interactions010_Maurice-Malachi-1.jpg");
     background-size: cover;
     background-position: center top;
   }
@@ -42,7 +42,7 @@ $container = get_theme_mod( 'understrap_container_type' );
       <div class="row">
       <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/BBBS_Interactions002_Sherry-Ankita.jpg">
+          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/BBBS_Interactions002_Sherry-Ankita-1.jpg">
             <div class="card-body">
               <p class="card-text">Take part in fun activites!</p>
             </div>
@@ -50,7 +50,7 @@ $container = get_theme_mod( 'understrap_container_type' );
         </div>
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/BBBS_Interactions016_Maria-Jazmin.jpg">
+          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/BBBS_Interactions016_Maria-Jazmin.-1jpg">
             <div class="card-body">
               <p class="card-text">Take part in fun activites!</p>
             </div>
@@ -58,7 +58,7 @@ $container = get_theme_mod( 'understrap_container_type' );
         </div>    
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/Big-Sister-Rebecca-and-Little-Sister-Kaylin-WEDD3042.jpg">
+          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/Big-Sister-Rebecca-and-Little-Sister-Kaylin-WEDD3042-1.jpg">
             <div class="card-body">
               <p class="card-text">Take part in fun activites!</p>
             </div>
