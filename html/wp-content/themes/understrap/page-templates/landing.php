@@ -50,7 +50,7 @@ $container = get_theme_mod( 'understrap_container_type' );
         </div>
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/BBBS_Interactions016_Maria-Jazmin-1.pg">
+          <img src="<?php echo home_url(); ?>/wp-content/uploads/2019/02/BBBS_Interactions016_Maria-Jazmin-1.jpg">
             <div class="card-body">
               <p class="card-text">Learn and grow with your little!</p>
             </div>
