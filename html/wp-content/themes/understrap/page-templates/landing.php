@@ -29,7 +29,7 @@ $container = get_theme_mod( 'understrap_container_type' );
   <section class="jumbotron text-center">
     <div class="container">
       <h1 class="jumbotron-heading">Be a Big!</h1>
-      <p class="lead text-muted">Make a difference in the life of child in your area! </p>
+      <p class="lead text-muted">Make a difference in the life of a child in your area! </p>
       <p>
         <a href="https://volunteers.bbbsia.org/enrollment-forms" class="btn btn-primary my-2">Get Started!</a>
       </p>
