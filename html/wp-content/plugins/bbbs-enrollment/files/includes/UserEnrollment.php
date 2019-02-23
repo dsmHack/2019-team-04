@@ -134,6 +134,10 @@ class UserEnrollment {
         return ($this->lastUpdatedAt) ? date($format,strtotime($this->lastUpdatedAt)) : null;
     }
 
+    public function getCompletedForms() {
+        return $this->completedForms;
+    }
+
     public function getUniqueCompletedFormCount() {
         return count(array_reduce($this->completedForms,function($acc,$cur) {
             $formId = $cur['form_id'];

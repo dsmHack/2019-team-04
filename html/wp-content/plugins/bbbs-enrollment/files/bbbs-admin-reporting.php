@@ -12,11 +12,37 @@ function bbbs_add_volunteer_submenu() {
 
 require_once(__DIR__ . "/includes/UserEnrollment.php");
 require_once(__DIR__ . "/includes/EnrollmentCollection.php");
+require_once(__DIR__ . "/includes/EnrollmentForms.php");
 
 function volunteer_dashboard_page() {
-?>
-<h2>BBBS Volunteer Dashboard</h2>
-<?php
+    $applicationCompleted = 0;
+
+    $ec = new EnrollmentCollection();
+    $enrolled = $ec->allEnrollments();
+
+    $ef = new EnrollmentForms();
+
+    foreach ($enrolled as $e) {
+        $completedForms = $e->getCompletedForms();
+        foreach ($completedForms as $c) {
+            $form = $ef->getFormById($c["form_id"]);
+            if ($form["title"] == "Volunteer Application") {
+                $applicationCompleted++;
+            }
+        }
+    }
+
+    ?>
+    <style type="text/css">
+        .vol-dash-metric {
+            font-size: 16px;
+        }
+    </style>
+    
+    <h1>BBBS Volunteer Dashboard</h1>
+    <h4 class="vol-dash-metric"><?=count($enrolled)?> Enrolled Volunteers</h4>
+    <h4 class="vol-dash-metric"><?=$applicationCompleted?> Volunteer Applications Completed</h4>
+    <?php
 }
 
 function volunteer_reports_page() {
