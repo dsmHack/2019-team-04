@@ -12,6 +12,14 @@ require_once(__DIR__ . "/files/bbbs-status.php");
 register_activation_hook( __FILE__, 'bbbs_install' );
 add_shortcode( 'enrollmentstatus', 'enrollment_status' );
 add_shortcode( 'status', 'bbbs_status' );
+add_shortcode( 'registerredirect', 'register_redirect' );
 
 add_action('admin_menu', 'bbbs_volunteer_menu');
+
+function register_redirect() {
+    if (is_user_logged_in() && is_page()) {
+        wp_redirect('/enrollment-forms');
+        exit;
+    }
+}
 ?>
