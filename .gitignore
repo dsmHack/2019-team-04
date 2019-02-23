@@ -13,3 +13,5 @@ wp-config.php
 *.DS_Store
 *[Tt]humbs.db
 *.Trashes
+
+dbdata/
