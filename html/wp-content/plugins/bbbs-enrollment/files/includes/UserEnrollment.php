@@ -149,4 +149,24 @@ class UserEnrollment {
         },array()));
     }
 
+    public function hasCompletedForm($formId) {
+        $ids = array_map(function($cur) {
+            return $cur['form_id'];
+        },$this->completedForms);
+        return in_array($formId,$ids);
+    }
+
+    public function completedFormEntryId($formId) {
+        $entryId = array_reduce($this->completedForms,function ($acc,$cur) use ($formId) {
+            if ($formId == $cur['form_id']) {
+                $acc = $cur['id'];
+            } 
+            return $acc;
+        },false);
+
+        //var_dump($entryId);
+
+        return $entryId;
+
+    }
 }
