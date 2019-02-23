@@ -63,37 +63,10 @@ class UserEnrollment {
     }
 
     protected function findCompletedForms() {
-
-		//$enrollForms = new EnrollmentForms();
-		//$formids = $enrollForms->getAllFormIDs();
-
-        // Get all from ids for current volunteer user.
-        
-        //var_dump($this->userId);
-
         $search_criteria = array();
-
         $search_criteria['status'] = 'active';
         $search_criteria['field_filters'][] = array( 'key' => 'created_by', 'value' => $this->userId );
-
         $this->completedForms = GFAPI::get_entries(0,$search_criteria);
-
-        //var_dump($this->completedForms);
-
-        /*
-        foreach($this->completedForms as $form) {
-            echo $form['id'] . "<br />";
-            echo $form['form_id'] . "<br />";
-        }
-        */
-
-        
-		//$volunteerids = array_column($returnval, 'id');
-
-		// Check which form IDs are missing from submitted forms.
-		//$missingforms = array_diff($formids, $volunteerids)
-
-
     }
 
     protected function determineLatestEntry() {
@@ -163,10 +136,6 @@ class UserEnrollment {
             } 
             return $acc;
         },false);
-
-        //var_dump($entryId);
-
         return $entryId;
-
     }
 }
