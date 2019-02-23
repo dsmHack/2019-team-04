@@ -11,6 +11,7 @@
 function enrollment_status() {
 	// Check if user is logged in.
 	$user_id = get_current_user_id();
+	$user = wp_get_current_user();
 	if ($user_id == 0) {
     	return;
 	} else {
@@ -18,8 +19,18 @@ function enrollment_status() {
 		$enrollForms = new EnrollmentForms();
 		$formids = $enrollForms->getAllFormIDs();
 
+		$search_criteria = array(
+			'status'        => 'active',
+   			'field_filters' => array(
+        			'mode' => 'any',
+        			array(
+            				'key'   => 'created_by',
+            				'value' => $user->ID,
+        			)
+    			)
+		);
 		// Get all from ids for current volunteer user.
-		$returnval = GFAPI::get_entries(0, $search_criteria['field_filters'][] = array( 'key' => 'created_by', 'value' => $user_id ));
+		$returnval = GFAPI::get_entries(0, $search_criteria);
 		$volunteerids = array_column($returnval, 'form_id');
 
 		// Check which form IDs are missing from submitted forms.
