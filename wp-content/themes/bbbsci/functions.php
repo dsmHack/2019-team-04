@@ -120,6 +120,10 @@ add_action( 'widgets_init', 'bbbsci_widgets_init' );
  * Enqueue scripts and styles.
  */
 function bbbsci_scripts() {
+
+
+	wp_enqueue_script( 'jquery-cdn', '//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js',array(), '3.3.1', true);
+	wp_enqueue_script( 'bootstrap-js', '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js',array( 'jquery-cdn' ), true);
 	wp_enqueue_style( 'bbbsci-style', get_stylesheet_uri() );
 
 	wp_enqueue_script( 'bbbsci-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
