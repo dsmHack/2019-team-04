@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  Amazon Simple Storage Service (Amazon S3) bucket using server-side encryption
+  with Amazon S3-managed keys SSE-S3. With a lifecycle rule that aborts incomplete 
+  multipart uploads.
+###############################################################################
+Parameters:
+  NumberOfDaysIncompleteMultipartUpload:
+    Type: Number
+    Description: >
+      The number of days after which incomplete multipart uploads are aborted.
+    Default: 7
+Resources:
+  TheBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: bbbs-document-storage-bucket
+      BucketEncryption:
+        ServerSideEncryptionConfiguration: 
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: MultipartUploadLifecycleRule
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: !Ref NumberOfDaysIncompleteMultipartUpload
+  User:
+    Type: AWS::IAM::User
+    Properties:
+      Policies:
+      - PolicyName: BucketPermissions
+        PolicyDocument:
+          Statement:
+          - Effect: "Allow"
+            Action: "s3:ListAllMyBuckets"
+            Resource: "arn:aws:s3:::*"
+          - Effect: "Allow"
+            Action: "s3:*"
+            Resource: 
+            - !GetAtt TheBucket.Arn
+            - !Sub "${TheBucket.Arn}/*"
+  Keys:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref 'User'
+Outputs:
+  AccessKey:
+    Value: !Ref 'Keys'
+    Description: AWSAccessKeyId of new user
+  SecretKey:
+    Value: !GetAtt [Keys, SecretAccessKey]
+    Description: AWSSecretAccessKey of new user
