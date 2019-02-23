@@ -52,7 +52,12 @@ $container = get_theme_mod( 'understrap_container_type' );
 
 					<?php } else {
 						the_custom_logo();
-					} ?>
+					}
+					if (is_user_logged_in()) {
+						?><div class="login"><?php
+						wp_loginout(); ?>
+						</div>
+					<?php }?><!-- end custom logo -->
 
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="<?php esc_attr_e( 'Toggle navigation', 'understrap' ); ?>">
 					<span class="navbar-toggler-icon"></span>
