@@ -17,6 +17,7 @@ require_once(__DIR__ . "/includes/EnrollmentForms.php");
 function volunteer_dashboard_page() {
     $volunteersFinished = 0;
     $applicationCompleted = 0;
+    $volunteersEnrollDate = [];
 
     $ec = new EnrollmentCollection();
     $enrolled = $ec->allEnrollments();
@@ -37,8 +38,9 @@ function volunteer_dashboard_page() {
         if (count($completedForms) == $totalFormCount) {
             $volunteersFinished++;
         }
-    }
 
+        array_push($volunteersEnrollDate, $e->getCreatedAt('U'));
+    }
     ?>
     <style type="text/css">
         .vol-dash-metric {
@@ -56,9 +58,14 @@ function volunteer_dashboard_page() {
             float: left;
             clear: both;
         }
+
+        #vol-enroll-chart-container {
+            width: 80%;
+        }
     </style>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 
     <h1>BBBS Volunteer Dashboard</h1>
     <h4 class="vol-dash-metric"><?=count($enrolled)?> Enrolled Volunteers</h4>
@@ -66,12 +73,49 @@ function volunteer_dashboard_page() {
     <h4 class="vol-dash-metric"><?=$volunteersFinished?> Finished Volunteers</h4>
     
     <h5 class="vol-graph-header">Volunteers Enrolled By Day (last week)</h5>
-    <canvas id="vol-enroll-chart" width="400" height="400"></canvas>
+    <div id="vol-enroll-chart-container"><canvas id="vol-enroll-chart" width="400" height="100"></canvas></div>
 
     <script type="text/javascript">
         jQuery(document).ready( function () {
-            alert('hello');
+            build_enrollment_chart();
         } );
+
+        function build_enrollment_chart() {
+            var enrolled_users = JSON.parse('<?=json_encode($volunteersEnrollDate)?>');
+  
+            var now = moment();
+            var beginning = now.subtract(1, 'weeks').startOf('day');
+            
+            var buckets = [];
+            for (var x = 0;x <= 7; x++) {
+                var d = moment(beginning).add(x, 'day').endOf('day');
+                buckets.push({ 'date': d, 'ts': d.unix(), 'count': 0 });
+            }
+
+            enrolled_users.forEach(u => {
+                for (var x = 0;x < buckets.length;x++) {
+                    if (u > buckets[x]['ts']) {
+                        if (x >= buckets.length || u <= buckets[x + 1]['ts']) {
+                            buckets[x]['count']++;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            var chartData = { labels: [], datasets: [ { label: '# of Enrolled Volunteers', data: [], backgroundColor: [] } ] };
+            for (var x = 0;x < buckets.length - 1;x++) {
+                chartData['labels'].push(buckets[x]['date'].add(12, 'hours').format('ddd M/D'));
+                chartData['datasets'][0]['data'].push(buckets[x]['count']);
+                chartData['datasets'][0]['backgroundColor'].push('rgba(54, 162, 235, 0.2)');
+            }
+
+            var ctx = document.getElementById("vol-enroll-chart");
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: chartData
+            });
+        }
     </script>
     <?php
 }
