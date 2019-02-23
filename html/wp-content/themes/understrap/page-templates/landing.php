@@ -20,6 +20,7 @@ $container = get_theme_mod( 'understrap_container_type' );
   .jumbotron {
     background-image: url("https://volunteers.bbbsia.org/wp-content/uploads/2019/02/BBBS_Interactions010_Maurice-Malachi.jpg");
     background-size: cover;
+    background-position: center center;
   }
 </style>
 </head>
