@@ -12,11 +12,112 @@ function bbbs_add_volunteer_submenu() {
 
 require_once(__DIR__ . "/includes/UserEnrollment.php");
 require_once(__DIR__ . "/includes/EnrollmentCollection.php");
+require_once(__DIR__ . "/includes/EnrollmentForms.php");
 
 function volunteer_dashboard_page() {
-?>
-<h2>BBBS Volunteer Dashboard</h2>
-<?php
+    $volunteersFinished = 0;
+    $applicationCompleted = 0;
+    $volunteersEnrollDate = [];
+
+    $ec = new EnrollmentCollection();
+    $enrolled = $ec->allEnrollments();
+
+    $ef = new EnrollmentForms();
+    $totalFormCount = count($ef->getAllForms());
+
+    foreach ($enrolled as $e) {
+        $completedForms = $e->getCompletedForms();
+        foreach ($completedForms as $c) {
+            $form = $ef->getFormById($c["form_id"]);
+            if ($form["title"] == "Volunteer Application") {
+                $applicationCompleted++;
+                break;
+            }
+        }
+
+        if (count($completedForms) == $totalFormCount) {
+            $volunteersFinished++;
+        }
+
+        array_push($volunteersEnrollDate, $e->getCreatedAt('U'));
+    }
+    ?>
+    <style type="text/css">
+        .vol-dash-metric {
+            font-size: 16px;
+            float: left;
+            width: 30%;
+            border-left: 4px solid #AAA;
+            padding-left: 10px;
+        }
+        .vol-graph-header {
+            font-size: 14px;
+            margin-top: 30px;
+            border-bottom: 1px solid #AAA;
+            padding: 7px 3px;
+            float: left;
+            clear: both;
+        }
+
+        #vol-enroll-chart-container {
+            width: 80%;
+        }
+    </style>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+    <h1>BBBS Volunteer Dashboard</h1>
+    <h4 class="vol-dash-metric"><?=count($enrolled)?> Enrolled Volunteers</h4>
+    <h4 class="vol-dash-metric"><?=$applicationCompleted?> Volunteer Applications Completed</h4>
+    <h4 class="vol-dash-metric"><?=$volunteersFinished?> Finished Volunteers</h4>
+    
+    <h5 class="vol-graph-header">Volunteers Enrolled By Day (last week)</h5>
+    <div id="vol-enroll-chart-container"><canvas id="vol-enroll-chart" width="400" height="100"></canvas></div>
+
+    <script type="text/javascript">
+        jQuery(document).ready( function () {
+            build_enrollment_chart();
+        } );
+
+        function build_enrollment_chart() {
+            var enrolled_users = JSON.parse('<?=json_encode($volunteersEnrollDate)?>');
+  
+            var now = moment();
+            var beginning = now.subtract(1, 'weeks').startOf('day');
+            
+            var buckets = [];
+            for (var x = 0;x <= 7; x++) {
+                var d = moment(beginning).add(x, 'day').endOf('day');
+                buckets.push({ 'date': d, 'ts': d.unix(), 'count': 0 });
+            }
+
+            enrolled_users.forEach(u => {
+                for (var x = 0;x < buckets.length;x++) {
+                    if (u > buckets[x]['ts']) {
+                        if (x >= buckets.length || u <= buckets[x + 1]['ts']) {
+                            buckets[x]['count']++;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            var chartData = { labels: [], datasets: [ { label: '# of Enrolled Volunteers', data: [], backgroundColor: [] } ] };
+            for (var x = 0;x < buckets.length - 1;x++) {
+                chartData['labels'].push(buckets[x]['date'].add(12, 'hours').format('ddd M/D'));
+                chartData['datasets'][0]['data'].push(buckets[x]['count']);
+                chartData['datasets'][0]['backgroundColor'].push('rgba(54, 162, 235, 0.2)');
+            }
+
+            var ctx = document.getElementById("vol-enroll-chart");
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: chartData
+            });
+        }
+    </script>
+    <?php
 }
 
 function volunteer_reports_page() {
