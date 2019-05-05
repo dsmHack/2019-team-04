@@ -2846,7 +2846,8 @@ abstract class GFPaymentAddOn extends GFFeedAddOn {
 		}
 
 		if ( isset( $search['end_date'] ) ) {
-			$lead_date_filter .= $wpdb->prepare( " AND timestampdiff(SECOND, %s, CONVERT_TZ(l.payment_date, '+00:00', '" . $tz_offset . "')) <= 0", $search['end_date'] );
+			$search['end_date']      .= ' 23:59:59';
+			$lead_date_filter        .= $wpdb->prepare( " AND timestampdiff(SECOND, %s, CONVERT_TZ(l.payment_date, '+00:00', '" . $tz_offset . "')) <= 0", $search['end_date'] );
 			$transaction_date_filter .= $wpdb->prepare( " AND timestampdiff(SECOND, %s, CONVERT_TZ(t.date_created, '+00:00', '" . $tz_offset . "')) <= 0", $search['end_date'] );
 		}
 
@@ -3568,10 +3569,11 @@ abstract class GFPaymentAddOn extends GFFeedAddOn {
 	}
 
 	/**
-	 * Target of gform_before_delete_field hook. Sets relevant payment feeds to inactive when the credit card field is deleted.
+	 * Target of gform_before_delete_field hook. Sets relevant payment feeds to inactive when the credit card field is
+	 * deleted.
 	 *
-	 * @param $form_id . ID of the form being edited.
-	 * @param $field_id . ID of the field being deleted.
+	 * @param int $form_id   ID of the form being edited.
+	 * @param int $field_id  ID of the field being deleted.
 	 */
 	public function before_delete_field( $form_id, $field_id ) {
 		if ( $this->_requires_credit_card ) {
