@@ -151,6 +151,25 @@ function render_report_details($userEnrollment) {
     $forms = $ef->getAllForms();
     $totalFormCount = count($forms);
 
+    $volunteerForms = $ef->getVolunteerForms();
+    $staffForms = $ef->getStaffForms();
+
+
+    /*
+    $altForms = array_map(function($cur) {
+        return array(
+            "id"=>$cur['id'],
+            "title"=>$cur['title'],
+            "form_visibility"=>$cur['form_visibility'],
+            "form_order"=>$cur['form_order']
+        );
+    },$forms);
+
+    echo "<pre>";
+    var_dump($altForms);
+    echo "</pre>";
+    */
+
 
 
     ?>
@@ -172,10 +191,33 @@ function render_report_details($userEnrollment) {
         <span><?php echo $userEnrollment->getUniqueCompletedFormCount(); ?></span>
     </p>
 
-    <h2>Form Status</h2>
+    <h2>Volunteer Form Status</h2>
 
     <ul>
-        <?php foreach($forms as $form): ?>
+        <?php foreach($volunteerForms as $form): ?>
+            <li style="list-style: square; margin-left: 15px;">
+                <?php $entryId = $userEnrollment->completedFormEntryId($form['id']); ?>
+
+                <?php if ($entryId !== false): ?>
+                    <a href="?page=gf_entries&view=entry&id=<?php echo $form['id']; ?>&lid=<?php echo $entryId; ?>&order=ASC&filter&paged=1&field_id&operator#"><?php echo $form['title']; ?></a>
+                <?php else: ?>
+                    <?php echo $form['title']; ?>
+                <?php endif; ?>
+
+
+                <?php if ($userEnrollment->hasCompletedForm($form['id'])): ?>
+                ✅
+                <?php else: ?>
+                ❌
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+
+    <h2>Staff Form Status</h2>
+
+    <ul>
+        <?php foreach($staffForms as $form): ?>
             <li style="list-style: square; margin-left: 15px;">
                 <?php $entryId = $userEnrollment->completedFormEntryId($form['id']); ?>
 
