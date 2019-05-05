@@ -38,7 +38,7 @@ function enrollment_status() {
 
 		// Print list of all forms,
 		// showing whether or not each has an entry.
-		$allForms = $enrollForms->getAllForms();
+		$allForms = $enrollForms->getVolunteerForms();
 
 		ob_start();
 		echo "<ul id=\"form-progress-list\" >";
