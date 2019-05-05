@@ -18,7 +18,7 @@ $container = get_theme_mod( 'understrap_container_type' );
 <head>
 <style>
   .jumbotron {
-    background-image: url("https://volunteers.bbbsia.org/wp-content/uploads/2019/02/BBBS_Interactions010_Maurice-Malachi-1.jpg");
+    background-image: url("/wp-content/uploads/2019/02/BBBS_Interactions010_Maurice-Malachi-1.jpg");
     background-size: cover;
     background-position: center 35%;
   }
@@ -31,7 +31,7 @@ $container = get_theme_mod( 'understrap_container_type' );
       <h1 class="jumbotron-heading">Be a Big!</h1>
       <p class="lead text-muted">Make a difference in the life of a child in your area! </p>
       <p>
-        <a href="https://volunteers.bbbsia.org/register" class="btn btn-primary my-2">Get Started!</a>
+        <a href="/register" class="btn btn-primary my-2">Get Started!</a>
       </p>
     </div>
   </section>
