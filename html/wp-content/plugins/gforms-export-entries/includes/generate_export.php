@@ -106,7 +106,10 @@ function gfee_generate_export( $export_name = 'Default', $start = '', $stop = ''
 	$paging = array( 'offset' => 0, 'page_size' => 200 );
 
 	foreach( $settings['forms'] as $form=>$fields ) {
-
+		//= Make sure all values for order as integers
+		foreach( $fields as $field=>$order ) {
+			$fields[ $field ] = (int)$order;
+		}
 		asort( $fields );
 
 		$form_id = $form_ids[ gfee_clean_title( $form ) ];
@@ -123,8 +126,9 @@ function gfee_generate_export( $export_name = 'Default', $start = '', $stop = ''
 					foreach( $fields as $field=>$order ) {
 						//= Handle missing columns
 						++$current_column;
+
 						if ( $current_column !== (int)$order ) {
-							while ( $current_column !== (int)$order ) {
+							while ( $current_column !== (int)$order && $current_column < (int)$order ) {
 								$row[] = '';
 								++$current_column;
 							}

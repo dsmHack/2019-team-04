@@ -8,6 +8,8 @@
  *  - https://dev.twitter.com/docs/embedded-timelines
  */
 
+use Automattic\Jetpack\Assets;
+
 /**
  * Register the widget for use in Appearance -> Widgets
  */
@@ -27,8 +29,8 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 			/** This filter is documented in modules/widgets/facebook-likebox.php */
 			apply_filters( 'jetpack_widget_name', esc_html__( 'Twitter Timeline', 'jetpack' ) ),
 			array(
-				'classname' => 'widget_twitter_timeline',
-				'description' => __( 'Display an official Twitter Embedded Timeline widget.', 'jetpack' ),
+				'classname'                   => 'widget_twitter_timeline',
+				'description'                 => __( 'Display an official Twitter Embedded Timeline widget.', 'jetpack' ),
 				'customize_selective_refresh' => true,
 			)
 		);
@@ -65,7 +67,7 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 		if ( 'widgets.php' === $hook ) {
 			wp_enqueue_script(
 				'twitter-timeline-admin',
-				Jetpack::get_file_url_for_environment(
+				Assets::get_file_url_for_environment(
 					'_inc/build/widgets/twitter-timeline-admin.min.js',
 					'modules/widgets/twitter-timeline-admin.js'
 				)
@@ -84,8 +86,7 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 		// Twitter deprecated `data-widget-id` on 2018-05-25,
 		// with cease support deadline on 2018-07-27.
-		// 1532563200 is 2018-07-26, one day early.
-		 if ( 'widget-id' === $instance['type'] && time() > 1532563200 ) {
+		if ( isset( $instance['type'] ) && 'widget-id' === $instance['type'] ) {
 			if ( current_user_can( 'edit_theme_options' ) ) {
 				echo $args['before_widget'];
 				echo $args['before_title'] . esc_html__( 'Twitter Timeline', 'jetpack' ) . $args['after_title'];
@@ -108,7 +109,7 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 			echo $args['before_title'] . $title . $args['after_title'];
 		}
 
-		if ( 'widget-id' === $instance['type'] && current_user_can( 'edit_theme_options' ) ) {
+		if ( isset( $instance['type'] ) && 'widget-id' === $instance['type'] && current_user_can( 'edit_theme_options' ) ) {
 			echo '<p>' . esc_html__( 'As of July 27, 2018, the Twitter Timeline widget will no longer display tweets based on searches or hashtags. To display a simple list of tweets instead, change the Widget ID to a Twitter username.', 'jetpack' ) . '</p>';
 			echo '<p>' . esc_html__( '(Only administrators will see this message.)', 'jetpack' ) . '</p>';
 		}
@@ -125,7 +126,7 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 			'link-color',
 			'border-color',
 			'tweet-limit',
-			'lang'
+			'lang',
 		);
 		foreach ( $data_attribs as $att ) {
 			if ( ! empty( $instance[ $att ] ) && ! is_array( $instance[ $att ] ) ) {
@@ -137,6 +138,22 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 		$partner = apply_filters( 'jetpack_twitter_partner_id', 'jetpack' );
 		if ( ! empty( $partner ) ) {
 			echo ' data-partner="' . esc_attr( $partner ) . '"';
+		}
+
+		/**
+		 * Allow the activation of Do Not Track for the Twitter Timeline Widget.
+		 *
+		 * @see https://developer.twitter.com/en/docs/twitter-for-websites/timelines/guides/parameter-reference.html
+		 *
+		 * @module widgets
+		 *
+		 * @since 6.9.0
+		 *
+		 * @param bool false Should the Twitter Timeline use the DNT attribute? Default to false.
+		 */
+		$dnt = apply_filters( 'jetpack_twitter_timeline_default_dnt', false );
+		if ( true === $dnt ) {
+			echo ' data-dnt="true"';
 		}
 
 		if ( ! empty( $instance['chrome'] ) && is_array( $instance['chrome'] ) ) {
@@ -247,7 +264,6 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 			if ( preg_match( $hex_regex, $new_color ) ) {
 				$instance[ $color ] = $new_color;
 			}
-
 		}
 
 		$instance['type'] = 'profile';
@@ -258,7 +274,7 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 		}
 
 		$instance['chrome'] = array();
-		$chrome_settings = array(
+		$chrome_settings    = array(
 			'noheader',
 			'nofooter',
 			'noborders',
@@ -277,9 +293,9 @@ class Jetpack_Twitter_Timeline_Widget extends WP_Widget {
 	}
 
 	/**
- 	 * Returns a link to the documentation for a feature of this widget on
- 	 * Jetpack or WordPress.com.
- 	 */
+	 * Returns a link to the documentation for a feature of this widget on
+	 * Jetpack or WordPress.com.
+	 */
 	public function get_docs_link( $hash = '' ) {
 		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
 			$base_url = 'https://support.wordpress.com/widgets/twitter-timeline-widget/';

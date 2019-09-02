@@ -3,7 +3,7 @@ Contributors: theverylastperson
 Tags: Gravity Forms, export, entries, spreadsheet
 Requires at least: 
 Tested up to: 4.9.8
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 Bitbucket Plugin URI: https://bitbucket.org/Optimized-Marketing/gforms-export-entries/
 Bitbucket Branch:     master  
 
@@ -35,6 +35,10 @@ Releasing it for everyone to use is one small way we're supporting the WordPress
 You can find our other tools we use to manage our agency at https://OptiReto.com
 
 == Changelog ==
+= 1.4.5 =
+*
+* FIX: Added code to insure field order numbers are integers and added catch to while loop to prevent endless loop
+*
 = 1.4.4 =
 *
 * Revised method used to alert user to setup export entries when new form is saved

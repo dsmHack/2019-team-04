@@ -30,7 +30,11 @@ class Jetpack_Media_Summary {
 		}
 
 		if ( ! class_exists( 'Jetpack_Media_Meta_Extractor' ) ) {
-			jetpack_require_lib( 'class.media-extractor' );
+			if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+				jetpack_require_lib( 'class.wpcom-media-meta-extractor' );
+			} else {
+				jetpack_require_lib( 'class.media-extractor' );
+			}
 		}
 
 		$post      = get_post( $post_id );
@@ -74,7 +78,7 @@ class Jetpack_Media_Summary {
 						if ( 0 == $return['count']['video'] ) {
 							// If there is no id on the video, then let's just skip this
 							if ( ! isset ( $data['id'][0] ) ) {
-								continue;
+								break;
 							}
 
 							$guid = $data['id'][0];
@@ -84,7 +88,7 @@ class Jetpack_Media_Summary {
 							if ( $video_info instanceof stdClass ) {
 								// Continue early if we can't find a Video slug.
 								if ( empty( $video_info->files->std->mp4 ) ) {
-									continue;
+									break;
 								}
 
 								$url = sprintf(
@@ -336,12 +340,27 @@ class Jetpack_Media_Summary {
 		return '';
 	}
 
+	/**
+	 * Split a string into an array of words.
+	 *
+	 * @param string $text Post content or excerpt.
+	 */
+	static function split_content_in_words( $text ) {
+		$words = preg_split( '/[\s!?;,.]+/', $text, null, PREG_SPLIT_NO_EMPTY );
+
+		// Return an empty array if the split above fails. 
+		return $words ? $words : array();	
+	}
+
 	static function get_word_count( $post_content ) {
-		return str_word_count( self::clean_text( $post_content ) );
+		return (int) count( self::split_content_in_words( self::clean_text( $post_content ) ) );
 	}
 
 	static function get_word_remaining_count( $post_content, $excerpt_content ) {
-		return str_word_count( self::clean_text( $post_content ) ) - str_word_count( self::clean_text( $excerpt_content ) );
+		$content_word_count = count( self::split_content_in_words( self::clean_text( $post_content ) ) );
+		$excerpt_word_count = count( self::split_content_in_words( self::clean_text( $excerpt_content ) ) ); 
+
+		return (int) $content_word_count - $excerpt_word_count;
 	}
 
 	static function get_link_count( $post_content ) {

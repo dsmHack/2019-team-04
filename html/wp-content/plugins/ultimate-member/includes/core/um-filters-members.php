@@ -86,11 +86,14 @@ function um_remove_special_users_from_list( $query_args, $args ) {
 
 		if ( ! empty( $roles ) ) {
 			if ( ! empty( $query_args['role__in'] ) ) {
-				$query_args['role__in'] = array_intersect( $query_args['role__in'], $roles );
+				$roles_intersect = array_intersect( $query_args['role__in'], $roles );
+				if( ! empty( $roles_intersect ) ){
+					$query_args['role__in'] = $roles_intersect;
+				}
 			} else {
 				$query_args['role__in'] = $roles;
 			}
-		}
+		}		
 
 	}
 
@@ -342,9 +345,9 @@ function um_prepare_user_query_args( $query_args, $args ) {
 	// must have a cover photo
 	if ( $has_cover_photo == 1 ) {
 		$query_args['meta_query'][] = array(
-			'key' => 'cover_photo',
-			'value' => '',
-			'compare' => '!='
+			'key'       => 'cover_photo',
+			'value'     => '',
+			'compare'   => '!='
 		);
 	}
 
@@ -359,16 +362,8 @@ function um_prepare_user_query_args( $query_args, $args ) {
 
 	// add roles to appear in directory
 	if ( ! empty( $roles ) ) {
-
 		//since WP4.4 use 'role__in' argument
 		$query_args['role__in'] = $roles;
-
-		/*$query_args['meta_query'][] = array(
-				'key' => 'role',
-				'value' => $roles,
-				'compare' => 'IN'
-			);*/
-
 	}
 
 	// sort members by
@@ -376,13 +371,35 @@ function um_prepare_user_query_args( $query_args, $args ) {
 
 	if ( isset( $sortby ) ) {
 
-
 		if ( $sortby == 'other' && $sortby_custom ) {
 
 			$query_args['meta_key'] = $sortby_custom;
 			$query_args['orderby'] = 'meta_value, display_name';
 
-		} else if ( in_array( $sortby, array( 'last_name', 'first_name' ) ) ) {
+		} elseif ( 'display_name' == $sortby ) {
+
+			$display_name = UM()->options()->get( 'display_name' );
+			if ( $display_name == 'username' ) {
+				$query_args['orderby'] = 'user_login';
+				$order = 'ASC';
+			} else {
+				$query_args['meta_query'][] = array(
+					'relation' => 'OR',
+					'full_name' => array(
+						'key'       => 'full_name',
+						'compare'   => 'EXISTS'
+					),
+					array(
+						'key'       => 'full_name',
+						'compare'   => 'NOT EXISTS'
+					)
+				);
+
+				$query_args['orderby'] = 'full_name, display_name';
+				$order = 'ASC';
+			}
+
+		} elseif ( in_array( $sortby, array( 'last_name', 'first_name' ) ) ) {
 
 			$query_args['meta_key'] = $sortby;
 			$query_args['orderby'] = 'meta_value';
@@ -390,7 +407,7 @@ function um_prepare_user_query_args( $query_args, $args ) {
 		} else {
 
 			if ( strstr( $sortby, '_desc' ) ) {
-				$sortby = str_replace('_desc','',$sortby);
+				$sortby = str_replace( '_desc', '', $sortby );
 				$order = 'DESC';
 			}
 
@@ -429,7 +446,7 @@ function um_prepare_user_query_args( $query_args, $args ) {
 		 * }
 		 * ?>
 		 */
-		$query_args = apply_filters('um_modify_sortby_parameter', $query_args, $sortby);
+		$query_args = apply_filters( 'um_modify_sortby_parameter', $query_args, $sortby );
 
 	}
 
@@ -448,9 +465,18 @@ add_filter( 'um_prepare_user_query_args', 'um_prepare_user_query_args', 10, 2 );
  */
 function um_sortby_last_login( $query_args, $sortby ) {
 	if ( $sortby == 'last_login' ) {
-		$query_args['orderby'] = 'meta_value_num';
-		$query_args['order'] = 'desc';
-		$query_args['meta_key'] = '_um_last_login';
+		$query_args['orderby'] = array( 'um_last_login' => 'DESC' );
+		$query_args['meta_query'][] = array(
+			'relation' => 'OR',
+			array(
+				'key'   => '_um_last_login',
+				'compare'   => 'EXISTS',
+			),
+			'um_last_login' => array(
+				'key'   => '_um_last_login',
+				'compare'   => 'NOT EXISTS',
+			),
+		);
 	}
 	return $query_args;
 }

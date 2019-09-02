@@ -23,6 +23,10 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'Kangaroos cannot jump here' );
+}
+
 class Ai1wm_File {
 
 	/**
@@ -67,5 +71,15 @@ class Ai1wm_File {
 	 */
 	public static function create_with_markers( $path, $marker, $content ) {
 		return @insert_with_markers( $path, $marker, $content );
+	}
+
+	/**
+	 * Delete a file by path
+	 *
+	 * @param  string  $path Path to the file
+	 * @return boolean
+	 */
+	public static function delete( $path ) {
+		return @unlink( $path );
 	}
 }

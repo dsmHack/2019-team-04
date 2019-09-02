@@ -22,6 +22,10 @@
  * ███████║███████╗██║  ██║ ╚████╔╝ ██║ ╚═╝ ██║██║  ██║███████║██║  ██╗
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'Kangaroos cannot jump here' );
+}
 ?>
 
 <div class="ai1wm-container">
@@ -58,7 +62,24 @@
 												<br />
 											<?php endif; ?>
 											<i class="ai1wm-icon-file-zip"></i>
-											<?php echo esc_html( basename( $backup['filename'] ) ); ?>
+											<span class="ai1wm-backup-filename">
+												<?php echo esc_html( basename( $backup['filename'] ) ); ?>
+											</span>
+											<?php if ( isset( $backups_labels[ basename( $backup['filename'] ) ] ) ) : ?>
+												<span class="ai1wm-backup-label">
+													<br />
+													<span class="ai1wm-backup-label-colored">
+														<?php echo esc_html( $backups_labels[ basename( $backup['filename'] ) ] ); ?>
+													</span>
+													<i class="ai1wm-icon-edit-pencil"></i>
+												</span>
+											<?php else : ?>
+												<span class="ai1wm-add-description">
+													<br />
+													<?php _e( 'Click to set a label for this backup', AI1WM_PLUGIN_NAME ); ?>
+													<i class="ai1wm-icon-edit-pencil"></i>
+												</span>
+											<?php endif; ?>
 										</td>
 										<td class="ai1wm-column-date">
 											<?php echo esc_html( sprintf( __( '%s ago', AI1WM_PLUGIN_NAME ), human_time_diff( $backup['mtime'] ) ) ); ?>
@@ -71,15 +92,15 @@
 											<?php endif; ?>
 										</td>
 										<td class="ai1wm-column-actions ai1wm-backup-actions">
-											<a href="<?php echo ai1wm_backup_url( array( 'archive' => esc_attr( $backup['filename'] ) ) ); ?>" class="ai1wm-button-green ai1wm-backup-download" download="<?php echo esc_attr( $backup['filename'] ); ?>">
+											<a href="<?php echo ai1wm_backup_url( array( 'archive' => esc_attr( $backup['filename'] ) ) ); ?>" class="ai1wm-button-green ai1wm-backup-download" download="<?php echo esc_attr( $backup['filename'] ); ?>" aria-label="<?php _e( 'Download backup', AI1WM_PLUGIN_NAME ); ?>">
 												<i class="ai1wm-icon-arrow-down"></i>
 												<span><?php _e( 'Download', AI1WM_PLUGIN_NAME ); ?></span>
 											</a>
-											<a href="#" data-archive="<?php echo esc_attr( $backup['filename'] ); ?>" class="ai1wm-button-gray ai1wm-backup-restore">
+											<a href="#" data-archive="<?php echo esc_attr( $backup['filename'] ); ?>" class="ai1wm-button-gray ai1wm-backup-restore" aria-label="<?php _e( 'Restore backup', AI1WM_PLUGIN_NAME ); ?>">
 												<i class="ai1wm-icon-cloud-upload"></i>
 												<span><?php _e( 'Restore', AI1WM_PLUGIN_NAME ); ?></span>
 											</a>
-											<a href="#" data-archive="<?php echo esc_attr( $backup['filename'] ); ?>" class="ai1wm-button-red ai1wm-backup-delete">
+											<a href="#" data-archive="<?php echo esc_attr( $backup['filename'] ); ?>" class="ai1wm-button-red ai1wm-backup-delete" aria-label="<?php _e( 'Delete backup', AI1WM_PLUGIN_NAME ); ?>">
 												<i class="ai1wm-icon-close"></i>
 												<span><?php _e( 'Delete', AI1WM_PLUGIN_NAME ); ?></span>
 											</a>

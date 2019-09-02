@@ -4,9 +4,9 @@ Plugin URI: https://ultimatemember.com/
 Contributors: ultimatemember, champsupertramp, nsinelnikov
 Donate link: 
 Tags: community, member, membership, user-profile, user-registration
-Requires at least: 4.7
-Tested up to: 5.0
-Stable tag: 2.0.39
+Requires at least: 4.9
+Tested up to: 5.2
+Stable tag: 2.0.50
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -71,6 +71,10 @@ Ultimate Member has a range of extensions that allow you to extend the power of 
 
 Our official [theme](https://ultimatemember.com/theme/) is purpose built for websites that have logged in and out users. The [theme](https://ultimatemember.com/theme/) has deep integration with Ultimate Member plugin and the extensions, different header designs for logged-in/out users and works alongside the Beaver Builder and Elementor page builders.
 
+= ForumWP =
+
+In addition to Ultimate Member we also have another plugin called [ForumWP](https://forumwpplugin.com/). ForumWP is a forum plugin which adds an online forum to your website, allowing users to create topics and write replies. Forums are a great way to build and grow an online community.
+
 = Development * Translations =
 
 If you're a developer and would like to contribute to the source code of the plugin you can do so via our [GitHub Repository](https://github.com/ultimatemember/ultimatemember).
@@ -132,6 +136,125 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 == Changelog ==
 
 = Important: UM2.0+ is a significant update to the code base from 1.3.88. Please make sure you take a full-site backup with restore point before updating the plugin =
+
+= 2.0.50: July 02, 2019 =
+
+* Enhancements:
+  - Extended hooks for 3rd party integrations
+
+* Bugfixes:
+  - Fixed PHP notices when runs validation
+  - Fixed loop issue with Profile tabs
+  - Fixed home page restrictions
+
+= 2.0.49: May 29, 2019 =
+
+* Enhancements:
+  - Extended hooks for 3rd party integrations
+
+* Bugfixes:
+  - Fixed security vulnerability with registration form
+  - Fixed the using of deprecated send password hook
+
+= 2.0.48: May 16, 2019 =
+
+* Enhancements:
+  - Added an ability to 3rd party integration with cover image actions
+
+* Bugfixes:
+  - Fixed ability to edit profile on not predefined Profile Page
+
+= 2.0.47: May 14, 2019 =
+
+* Bugfixes:
+  - Fixed save special characters values
+  - Fixed trim fields options before validation
+  - Fixed save empty value at Profile Registration form in radio/checkbox/select/multiselect fields
+  - Fixed displaying empty value of multiselect field at Profile Page
+  - Fixed cover photo dropdown menus
+
+= 2.0.46: May 10, 2019 =
+
+* Bugfixes:
+  - Fixed extensions' upgrader
+  - Security vulnerabilities on Profile/Registration submit and file/images uploading
+  - Fixed session clean on logout
+
+= 2.0.45: May 08, 2019 =
+
+* Bugfixes:
+  - Fixed issues with Gutenberg scripts and UM blocks
+  - Security vulnerabilities on Profile/Registration submit and file/images uploading
+
+= 2.0.44: May 08, 2019 =
+
+* Enhancements:
+  - Added automatically template saver when you upgrade your theme
+  - Added default value for Date and Time user profile fields
+  - Updated Scroll library
+  - Added REST API v2 class with new query vars. There is an ability to select v1 or v2 for use. For old users v1 is default, for new users v2
+
+* Bugfixes:
+  - Added nocache headers to reset password form
+  - Email templates saving to child theme, if parent theme already has email template files
+  - Email templates locate in the default plugin folder with active WPML
+  - Form builder with some predefined form fields, which had different keys/metakeys (currently use the same)
+  - Logout redirect with active WPML
+  - Fixed $_SERVER usage when WP-CLI using
+  - Extended integration for UM field value
+  - um_user function avoid loop when 'display name' and 'full name' used
+  - Restriction options for Terms and access on front-end
+  - Plugin/Theme upgrader
+  - Remove duplicate data 'user_login' from metadata
+  - Replace placeholders duplicates
+  - Password Reset link regeneration
+  - Fixed issues with scroll on mobile devices
+  - Fixed multisite activation
+
+* Deprecated:
+  - "Is Account page?" and "Is User page?" options for WPML integration ( because WPML translations works properly )
+
+= 2.0.43: March 29, 2019 =
+
+* Bugfixes:
+  - Fixed Last Login order in Member Directory
+
+= 2.0.42: March 28, 2019 =
+
+* Enhancements:
+  - Added option for enable/disable Gutenberg blocks
+
+* Bugfixes:
+  - Fixed conflicts with themes, which not support custom Gutenberg blocks via the option
+
+= 2.0.41: March 27, 2019 =
+
+* Enhancements:
+  - Added Gutenberg blocks section with Ultimate Member shortcodes
+  - Clear temp directory on upload process 1 day files old
+  - Updated custom scrollbar JS library to jQuery 3 support
+
+* Bugfixes:
+  - Fixed vulnerability with Reset Password form
+  - Fixed Edit Row settings
+  - Fixed save profile fields with 0 values
+  - Fixed upload photo base URL for Windows servers
+  - Fixed displaying user Posts at Profile/Posts tab
+  - Fixed unique filename issue, upload avatar with high case extension
+  - Fixed member directory filter title
+  - Fixed duplicate delete user handler
+  - Fixed sorting by Last Login date for users without meta
+  - Fixed hook after password reset (issue #532)
+  - Fixed member directory user role filter
+  - Fixed restriction content WC Products integration
+  - Fixed words count for French in user description field
+  - Fixed is_selected function for dropdown/multi-select/checkbox profile fields
+  - Fixed disable email field at Edit Profile form via filter (disabled by default)
+
+= 2.0.40: March 12, 2019 =
+
+* Bugfixes:
+  - Fixed security issue on user Account Update
 
 = 2.0.39: February 11, 2019 =
 

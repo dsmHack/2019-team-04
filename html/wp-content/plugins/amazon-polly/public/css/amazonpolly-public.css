@@ -24,12 +24,15 @@ width: auto;
 display:table-cell;
 border: 0;
 }
-#amazon-polly-label-tab {
+#amazon-ai-player-label {
 font-size: 80%;
 font-family: "Arial", Helvetica, sans-serif;
 }
 #amazon-polly-by-tab {
 font-size: .6em;
+text-align: right;
+}
+#amazon-polly-subscribe-tab {
 text-align: right;
 }
 #amazon-polly-trans-src {
@@ -39,10 +42,22 @@ text-align: right;
 	display:inline;
 	font-size: .6em;
 }
-.amazon-polly-audio-player {
+.amazon-polly-trans-label a {
+    text-decoration: none;
+}
+.amazon-ai-player {
 width: 100%;
 }
 .amazon-polly-transcript-area {
     height: 6em;
     width: 100%;
+}
+.amazon-ai-flag {
+  display: inline-block;
+  width: 35px;
+  height: 15px;
+  margin: 0px 0px 0px 0px;
+}
+.amazon-ai-flag-image {
+	max-height: 100%;
 }

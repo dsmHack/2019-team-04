@@ -16,11 +16,9 @@ function UM_check_password_matched() {
 }
 
 function UM_hide_menus() {
-
-		menu = jQuery('.um-dropdown');
-		menu.parents('div').find('a').removeClass('active');
-		menu.hide();
-
+	var menu = jQuery( '.um-dropdown' );
+	menu.parents('div' ).find('a').removeClass( 'active' );
+	menu.hide();
 }
 
 function UM_domenus(){
@@ -31,7 +29,7 @@ function UM_domenus(){
 		var element = jQuery(this).attr('data-element');
 		var position = jQuery(this).attr('data-position');
 
-		jQuery(element).addClass('um-trigger-menu-on-'+menu.attr('data-trigger'));
+		jQuery( element ).addClass('um-trigger-menu-on-' + menu.attr( 'data-trigger' ) );
 
 		if ( jQuery(window).width() <= 1200 && element == 'div.um-profile-edit' ) {
 			position = 'lc';
@@ -406,7 +404,7 @@ function initFileUpload_UM( trigger ) {
 						}else if( key == 'original_name' ){
 
 							trigger.parents('.um-modal-body').find('.um-single-fileinfo a').attr('data-orignal-name', value );
-							trigger.parents('.um-modal-body').find('.um-single-fileinfo span.filename').html( value );						
+							trigger.parents('.um-modal-body').find('.um-single-fileinfo span.filename').html( value );
 							
 						} else if ( key == 'url' ) {
 							
@@ -707,12 +705,6 @@ function remove_Modal() {
 	if ( jQuery('.um-popup-overlay').length ) {
 		jQuery( document ).trigger( 'um_before_modal_removed' );
 
-		if ( jQuery('.um-popup-autogrow:visible').length ) {
-			jQuery('.um-popup-autogrow:visible').mCustomScrollbar("destroy");
-		} else if ( jQuery('.um-popup-autogrow2:visible').length ) {
-			jQuery('.um-popup-autogrow2:visible').mCustomScrollbar("destroy");
-		}
-
 		jQuery('.tipsy').remove();
 		jQuery('.um-popup').empty().remove();
 		jQuery('.um-popup-overlay').empty().remove();
@@ -733,7 +725,7 @@ function show_Modal( contents ) {
 function responsive_Modal() {
 	if ( jQuery('.um-popup-overlay').length ) {
 
-		ag_height = jQuery(window).height() - jQuery('.um-popup um-popup-header').outerHeight() - jQuery('.um-popup .um-popup-footer').outerHeight() - 80;
+		ag_height = jQuery(window).height() - jQuery('.um-popup .um-popup-header').outerHeight() - jQuery('.um-popup .um-popup-footer').outerHeight() - 80;
 		if ( ag_height > 350 ) {
 			ag_height = 350;
 		}
@@ -741,12 +733,10 @@ function responsive_Modal() {
 		if ( jQuery('.um-popup-autogrow:visible').length ) {
 
 			jQuery('.um-popup-autogrow:visible').css({'height': ag_height + 'px'});
-			jQuery('.um-popup-autogrow:visible').mCustomScrollbar({ theme:"dark-3", mouseWheelPixels:500 }).mCustomScrollbar("scrollTo", "bottom",{ scrollInertia:0} );
 
 		} else if ( jQuery('.um-popup-autogrow2:visible').length ) {
 
 			jQuery('.um-popup-autogrow2:visible').css({'max-height': ag_height + 'px'});
-			jQuery('.um-popup-autogrow2:visible').mCustomScrollbar({ theme:"dark-3", mouseWheelPixels:500 });
 
 		}
 	}

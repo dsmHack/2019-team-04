@@ -23,19 +23,24 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'Kangaroos cannot jump here' );
+}
+
 class Ai1wm_Feedback {
 
 	/**
 	 * Submit customer feedback to servmask.com
 	 *
-	 * @param  string  $type    Feedback type
-	 * @param  string  $email   User e-mail
-	 * @param  string  $message User message
-	 * @param  integer $terms   User accept terms
+	 * @param  string  $type      Feedback type
+	 * @param  string  $email     User e-mail
+	 * @param  string  $message   User message
+	 * @param  integer $terms     User accept terms
+	 * @param  string  $purchases Purchases IDs
 	 *
 	 * @return array
 	 */
-	public function add( $type, $email, $message, $terms ) {
+	public function add( $type, $email, $message, $terms, $purchases ) {
 		$errors = array();
 
 		// Submit feedback to ServMask
@@ -53,9 +58,10 @@ class Ai1wm_Feedback {
 				array(
 					'timeout' => 15,
 					'body'    => array(
-						'type'    => $type,
-						'email'   => $email,
-						'message' => $message,
+						'type'      => $type,
+						'email'     => $email,
+						'message'   => $message,
+						'purchases' => $purchases,
 					),
 				)
 			);

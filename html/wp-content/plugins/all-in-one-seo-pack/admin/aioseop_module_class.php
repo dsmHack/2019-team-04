@@ -566,7 +566,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'EmailSiphon',
 				'EmailWolf',
 				'EroCrawler',
-				'Exabot',
 				'ExtractorPro',
 				'Fasterfox',
 				'FeedBooster',
@@ -622,7 +621,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'Python-urllib',
 				'QueryN Metasearch',
 				'RepoMonkey',
-				'SemrushBot',
 				'SISTRIX',
 				'sitecheck.Internetseer.com',
 				'SiteSnagger',
@@ -673,7 +671,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				'Incutio',
 				'lmspider',
 				'memoryBot',
-				'SemrushBot',
 				'serf',
 				'Unknown',
 				'uptime files',
@@ -841,7 +838,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return array
 		 */
 		function get_post_type_titles( $args = array() ) {
-			return $this->get_object_labels( get_post_types( $args, 'objects' ) );
+			$object_labels = $this->get_object_labels( get_post_types( $args, 'objects' ) );
+			if ( isset( $object_labels['attachment'] ) ) {
+				$object_labels['attachment'] = __( 'Media / Attachments', 'all-in-one-seo-pack' );
+			}
+			return $object_labels;
 		}
 
 		/**
@@ -854,12 +855,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * @param array $args
+		 * Gets the category titles.
 		 *
+		 * @since 3.0 Changed function name from `get_category_titles` to `get_term_titles`. (#240)
+		 * @since 3.0 Changed `get_categories()` to `get_terms()` to fetch all (custom) terms. (#240)
+		 *
+		 * @see WP_Term_Query::__constructor()
+		 * @link https://developer.wordpress.org/reference/classes/wp_term_query/__construct/
+		 *
+		 * @param array $args An array for arguments to query by. See WP_Term_Query::__constructor() for more info.
 		 * @return array
 		 */
-		function get_category_titles( $args = array() ) {
-			return $this->get_term_labels( get_categories( $args ) );
+		function get_term_titles( $args = array() ) {
+			return $this->get_term_labels( get_terms( $args ) );
 		}
 
 		/**
@@ -1206,8 +1214,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return bool
 		 */
 		function save_file( $filename, $contents ) {
-			$failed_str   = sprintf( __( "Failed to write file %s!\n", 'all-in-one-seo-pack' ), $filename );
-			$readonly_str = sprintf( __( "File %s isn't writable!\n", 'all-in-one-seo-pack' ), $filename );
+			$failed_str   = sprintf( __( 'Failed to write file %s!', 'all-in-one-seo-pack' ) . "\n", $filename );
+			$readonly_str = sprintf( __( 'File %s isn\'t writable!', 'all-in-one-seo-pack' ) . "\n", $filename );
 			$wpfs         = $this->get_filesystem_object();
 			if ( is_object( $wpfs ) ) {
 				$file_exists = $wpfs->exists( $filename );
@@ -1237,12 +1245,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( is_object( $wpfs ) ) {
 				if ( $wpfs->exists( $filename ) ) {
 					if ( $wpfs->delete( $filename ) === false ) {
-						$this->output_error( sprintf( __( "Failed to delete file %s!\n", 'all-in-one-seo-pack' ), $filename ) );
+						$this->output_error( sprintf( __( 'Failed to delete file %s!', 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} else {
 						return true;
 					}
 				} else {
-					$this->output_error( sprintf( __( "File %s doesn't exist!\n", 'all-in-one-seo-pack' ), $filename ) );
+					$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' ) . "\n", $filename ) );
 				}
 			}
 
@@ -1264,15 +1272,15 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$newfile_exists = $wpfs->exists( $newname );
 				if ( $file_exists && ! $newfile_exists ) {
 					if ( $wpfs->move( $filename, $newname ) === false ) {
-						$this->output_error( sprintf( __( "Failed to rename file %s!\n", 'all-in-one-seo-pack' ), $filename ) );
+						$this->output_error( sprintf( __( 'Failed to rename file %s!', 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} else {
 						return true;
 					}
 				} else {
 					if ( ! $file_exists ) {
-						$this->output_error( sprintf( __( "File %s doesn't exist!\n", 'all-in-one-seo-pack' ), $filename ) );
+						$this->output_error( sprintf( __( "File %s doesn't exist!", 'all-in-one-seo-pack' ) . "\n", $filename ) );
 					} elseif ( $newfile_exists ) {
-						$this->output_error( sprintf( __( "File %s already exists!\n", 'all-in-one-seo-pack' ), $newname ) );
+						$this->output_error( sprintf( __( 'File %s already exists!', 'all-in-one-seo-pack' ) . "\n", $newname ) );
 					}
 				}
 			}
@@ -1577,8 +1585,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				return false;
 			}
 
-			$size  = apply_filters( 'post_thumbnail_size', 'large' ); // Check if someone is using built-in WP filter.
-			$size  = apply_filters( 'aioseop_thumbnail_size', $size );
+			// Check if someone is using built-in WP filter.
+			$size  = apply_filters( 'aioseop_thumbnail_size', apply_filters( 'post_thumbnail_size', 'large' ) );
 			$image = wp_get_attachment_image_src( $post_thumbnail_id, $size );
 
 			return $image[0];
@@ -1609,8 +1617,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			);
 
 			if ( empty( $attachments ) && 'attachment' == get_post_type( $post->ID ) ) {
-				$size  = 'large';
-				$size  = apply_filters( 'aioseop_attachment_size', $size );
+				$size  = apply_filters( 'aioseop_attachment_size', 'large' );
 				$image = wp_get_attachment_image_src( $post->ID, $size );
 			}
 
@@ -1625,8 +1632,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			/* Loop through each attachment. Once the $order_of_image (default is '1') is reached, break the loop. */
 			foreach ( $attachments as $id => $attachment ) {
 				if ( ++ $i == 1 ) {
-					$size  = 'large';
-					$size  = apply_filters( 'aioseop_attachment_size', $size );
+					$size  = apply_filters( 'aioseop_attachment_size', 'large' );
 					$image = wp_get_attachment_image_src( $id, $size );
 					$alt   = trim( strip_tags( get_post_field( 'post_excerpt', $id ) ) );
 					break;
@@ -1645,7 +1651,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return bool
 		 */
 		function get_the_image_by_scan( $p = null ) {
-
 			if ( $p === null ) {
 				global $post;
 			} else {
@@ -1664,60 +1669,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
-		 * @param        $default_options
-		 * @param        $options
-		 * @param string $help_link
-		 */
-		function help_text_helper( &$default_options, $options, $help_link = '' ) {
-			foreach ( $options as $o ) {
-				$ht = '';
-				if ( ! empty( $this->help_text[ $o ] ) ) {
-					$ht = $this->help_text[ $o ];
-				} elseif ( ! empty( $default_options[ $o ]['help_text'] ) ) {
-					$ht = $default_options[ $o ]['help_text'];
-				}
-				if ( $ht && ! is_array( $ht ) ) {
-					$ha = '';
-					$hl = $help_link;
-					if ( strpos( $o, 'ga_' ) === 0 ) { // special case -- pdb
-						$hl = 'https://semperplugins.com/documentation/advanced-google-analytics-settings/';
-					}
-					if ( ! empty( $this->help_anchors[ $o ] ) ) {
-						$ha = $this->help_anchors[ $o ];
-					}
-					if ( ! empty( $ha ) && ( $pos = strrpos( $hl, '#' ) ) ) {
-						$hl = substr( $hl, 0, $pos );
-					}
-					if ( ! empty( $ha ) && ( $ha[0] == 'h' ) ) {
-						$hl = '';
-					}
-					if ( ! empty( $ha ) || ! isset( $this->help_anchors[ $o ] ) ) {
-						$ht .= "<br /><a href='" . $hl . $ha . "' target='_blank'>" . __( 'Click here for documentation on this setting', 'all-in-one-seo-pack' ) . '</a>';
-					}
-					$default_options[ $o ]['help_text'] = $ht;
-				}
-			}
-		}
-
-		function add_help_text_links() {
-			if ( ! empty( $this->help_text ) ) {
-				foreach ( $this->layout as $k => $v ) {
-					$this->help_text_helper( $this->default_options, $v['options'], $v['help_link'] );
-				}
-				if ( ! empty( $this->locations ) ) {
-					foreach ( $this->locations as $k => $v ) {
-						if ( ! empty( $v['default_options'] ) && ! empty( $v['options'] ) ) {
-							$this->help_text_helper( $this->locations[ $k ]['default_options'], $v['options'], $v['help_link'] );
-						}
-					}
-				}
-			}
-		}
-
-		/**
 		 * Load scripts and styles for metaboxes.
 		 * edit-tags exists only for pre 4.5 support... remove when we drop 4.5 support.
 		 * Also, that check and others should be pulled out into their own functions.
+		 *
+		 * @todo is it possible to migrate this to \All_in_One_SEO_Pack_Module::add_page_hooks? Or refactor? Both function about the same.
 		 *
 		 * @since 2.4.14 Added term as screen base.
 		 */
@@ -1759,22 +1715,30 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$enqueue_scripts = apply_filters( $prefix . 'enqueue_metabox_scripts', $enqueue_scripts, $screen, $v );
 					if ( $enqueue_scripts ) {
 						add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ), 20 );
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_styles' ), 20 );
 						add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 20 );
+						add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 20 );
 					}
 				}
 			}
 		}
 
-		function admin_enqueue_scripts() {
-			wp_enqueue_media(); // WP 3.5+ Media upload.
-		}
-
 		/**
 		 * Load styles for module.
+		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
+		 *
+		 * @since 2.9
+		 * @since 3.0 Added jQuery UI CSS missing from WP. #1850
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 * @uses wp_scripts() Gets the Instance of WP Scripts.
+		 * @link https://developer.wordpress.org/reference/functions/wp_scripts/
+		 *
+		 * @param string $hook_suffix
 		 */
-		function enqueue_styles() {
+		function admin_enqueue_styles( $hook_suffix ) {
 			wp_enqueue_style( 'thickbox' );
 			if ( ! empty( $this->pointers ) ) {
 				wp_enqueue_style( 'wp-pointer' );
@@ -1783,30 +1747,85 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( function_exists( 'is_rtl' ) && is_rtl() ) {
 				wp_enqueue_style( 'aioseop-module-style-rtl', AIOSEOP_PLUGIN_URL . 'css/modules/aioseop_module-rtl.css', array( 'aioseop-module-style' ), AIOSEOP_VERSION );
 			}
+
+			if ( ! wp_style_is( 'aioseop-jquery-ui', 'registered' ) && ! wp_style_is( 'aioseop-jquery-ui', 'enqueued' ) ) {
+				wp_enqueue_style(
+					'aioseop-jquery-ui',
+					AIOSEOP_PLUGIN_URL . 'css/aioseop-jquery-ui.css',
+					array(),
+					AIOSEOP_VERSION
+				);
+			}
 		}
 
 		/**
-		 * Load scripts for module, can pass data to module script.
+		 * Admin Enqueue Scripts
+		 *
+		 * Hook function to enqueue scripts and localize data to scripts.
+		 *
+		 * Add hook in \All_in_One_SEO_Pack_Module::enqueue_metabox_scripts - Bails adding hook if not on target valid screen.
+		 * Add hook in \All_in_One_SEO_Pack_Module::add_page_hooks - Function itself is hooked based on the screen_id/page.
+		 *
+		 * @since ?
 		 * @since 2.3.12.3 Add missing wp_enqueue_media.
+		 * @since 2.9 Switch to admin_enqueue_scripts; both the hook and function name.
+		 * @since 3.0 Add enqueue footer JS for jQuery UI Compatability. #1850
+		 *
+		 * @see 'admin_enqueue_scripts' hook
+		 * @link https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+		 * @global WP_Post $post Used to set the post ID in wp_enqueue_media().
+		 *
+		 * @param string $hook_suffix
 		 */
-		function enqueue_scripts() {
+		public function admin_enqueue_scripts( $hook_suffix ) {
 			wp_enqueue_script( 'sack' );
 			wp_enqueue_script( 'jquery' );
+			wp_enqueue_script( 'jquery-ui-tabs' );
 			wp_enqueue_script( 'media-upload' );
 			wp_enqueue_script( 'thickbox' );
 			wp_enqueue_script( 'common' );
 			wp_enqueue_script( 'wp-lists' );
 			wp_enqueue_script( 'postbox' );
+
 			if ( ! empty( $this->pointers ) ) {
-				wp_enqueue_script( 'wp-pointer', false, array( 'jquery' ) );
+				wp_enqueue_script(
+					'wp-pointer',
+					false,
+					array( 'jquery' )
+				);
 			}
+
 			global $post;
 			if ( ! empty( $post->ID ) ) {
 				wp_enqueue_media( array( 'post' => $post->ID ) );
 			} else {
 				wp_enqueue_media();
 			}
-			wp_enqueue_script( 'aioseop-module-script', AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js', array(), AIOSEOP_VERSION );
+
+			$helper_dep = array(
+				'jquery',
+				'jquery-ui-core',
+				'jquery-ui-widget',
+				'jquery-ui-position',
+				'jquery-ui-tooltip',
+			);
+
+			// AIOSEOP Script enqueue.
+			wp_enqueue_script(
+				'aioseop-module-script',
+				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_module.js',
+				array(),
+				AIOSEOP_VERSION
+			);
+			wp_enqueue_script(
+				'aioseop-helper-js',
+				AIOSEOP_PLUGIN_URL . 'js/aioseop-helper.js',
+				$helper_dep,
+				AIOSEOP_VERSION,
+				true
+			);
+
+			// Localize aiosp_data in JS.
 			if ( ! empty( $this->script_data ) ) {
 				aioseop_localize_script_data();
 			}
@@ -1871,8 +1890,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			if ( $this->strpos( $hookname, 'load-' ) === 0 ) {
 				$this->pagehook = $this->substr( $hookname, 5 );
 			}
-			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
-			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
 			add_filter( 'aioseop_localize_script_data', array( $this, 'localize_script_data' ) );
 			add_action( $this->prefix . 'settings_header', array( $this, 'display_tabs' ) );
 		}
@@ -2021,14 +2040,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					add_action( "load-{$hookname}", array( $this, 'add_page_hooks' ) );
 				} elseif ( $v['type'] === 'metabox' ) {
 					$this->setting_options( $k ); // hack -- make sure this runs anyhow, for now -- pdb
-					add_action( 'edit_post', array( $this, 'save_post_data' ) );
-					add_action( 'publish_post', array( $this, 'save_post_data' ) );
-					add_action( 'add_attachment', array( $this, 'save_post_data' ) );
-					add_action( 'edit_attachment', array( $this, 'save_post_data' ) );
-					add_action( 'save_post', array( $this, 'save_post_data' ) );
-					add_action( 'edit_page_form', array( $this, 'save_post_data' ) );
+					$this->toggle_save_post_hooks( true );
 					if ( isset( $v['display'] ) && ! empty( $v['display'] ) ) {
-						add_action( 'admin_print_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
+						add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_metabox_scripts' ), 5 );
 						if ( $this->tabbed_metaboxes ) {
 							add_filter( 'aioseop_add_post_metabox', array( $this, 'filter_return_metaboxes' ) );
 						}
@@ -2087,36 +2101,54 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
+		 * Adds or removes hooks that could be called while editing a post.
+		 *
+		 * TODO: Review if all these hooks are really required (save_post should be enough vs. edit_post and publish_post).
+		 */
+		private function toggle_save_post_hooks( $add ) {
+			if ( $add ) {
+				add_action( 'edit_post', array( $this, 'save_post_data' ) );
+				add_action( 'publish_post', array( $this, 'save_post_data' ) );
+				add_action( 'add_attachment', array( $this, 'save_post_data' ) );
+				add_action( 'edit_attachment', array( $this, 'save_post_data' ) );
+				add_action( 'save_post', array( $this, 'save_post_data' ) );
+				add_action( 'edit_page_form', array( $this, 'save_post_data' ) );
+			} else {
+				remove_action( 'edit_post', array( $this, 'save_post_data' ) );
+				remove_action( 'publish_post', array( $this, 'save_post_data' ) );
+				remove_action( 'add_attachment', array( $this, 'save_post_data' ) );
+				remove_action( 'edit_attachment', array( $this, 'save_post_data' ) );
+				remove_action( 'save_post', array( $this, 'save_post_data' ) );
+				remove_action( 'edit_page_form', array( $this, 'save_post_data' ) );
+			}
+		}
+
+		/**
 		 * Update postmeta for metabox.
 		 *
 		 * @param $post_id
 		 */
 		function save_post_data( $post_id ) {
-			static $update = false;
-			if ( $update ) {
-				return;
-			}
+			$this->toggle_save_post_hooks( false );
 			if ( $this->locations !== null ) {
 				foreach ( $this->locations as $k => $v ) {
 					if ( isset( $v['type'] ) && ( $v['type'] === 'metabox' ) ) {
 						$opts    = $this->default_options( $k );
 						$options = array();
-						$update  = false;
 						foreach ( $opts as $l => $o ) {
 							if ( isset( $_POST[ $l ] ) ) {
 								$options[ $l ] = stripslashes_deep( $_POST[ $l ] );
 								$options[ $l ] = esc_attr( $options[ $l ] );
-								$update        = true;
 							}
 						}
-						if ( $update ) {
-							$prefix  = $this->get_prefix( $k );
-							$options = apply_filters( $prefix . 'filter_metabox_options', $options, $k, $post_id );
-							update_post_meta( $post_id, '_' . $prefix . $k, $options );
-						}
+						$prefix  = $this->get_prefix( $k );
+						$options = apply_filters( $prefix . 'filter_metabox_options', $options, $k, $post_id );
+						update_post_meta( $post_id, '_' . $prefix . $k, $options );
 					}
 				}
 			}
+
+			$this->toggle_save_post_hooks( true );
 		}
 
 		/**
@@ -2200,10 +2232,34 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		}
 
 		/**
+		 * Get Option HTML
+		 *
 		 * Outputs a setting item for settings pages and metaboxes.
 		 *
-		 * @param $args
+		 * @since ?
+		 * @since 2.12 Add 'input' to allowed tags with 'html'. #2157
 		 *
+		 * @param array $args {
+		 *     Contains the admin option element values and attributes for rendering.
+		 *
+		 *     @type string $attr   The HTML element's attributes to render within the element.
+		 *     @type string $name   THE HTML element's name attribute. Used with form input elements.
+		 *     @type string $prefix Optional. The AIOSEOP Module prefix.
+		 *     @type string $value  The HTML element's value attribute.
+		 *     @type array  $options {
+		 *         Arguments used for this function/method operations and rendering.
+		 *
+		 *         @type string  $class      Optional. The HTML element's class attribute. This is used if
+		 *                                   `$options['count']` is not empty.
+		 *         @type int     $cols       Optional. Character count length of column.
+		 *         @type boolean $count      Optional. Determines whether to add the character count for SEO.
+		 *         @type string  $count_desc Optional. The description/help text to rend to the admin.
+		 *         @type string  $name       Optional. Used within the description/help text when it's for character count.
+		 *         @type boolean $required   Optional. Determines whether to require a value in the input element.
+		 *         @type int     $rows       Optional. Number of rows to multiply with cols.
+		 *         @type string  $type       Which Switch Case (HTML element) to use.
+		 *     }
+		 * }
 		 * @return string
 		 */
 		function get_option_html( $args ) {
@@ -2272,17 +2328,29 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					$buf .= "<input name='$name' type='{$options['type']}' $attr>\n";
 					break;
 				case 'textarea':
+					// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
+					if ( in_array( $name, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) {
+						$value  = htmlspecialchars_decode( $value, ENT_QUOTES );
+					}
 					$buf .= "<textarea name='$name' $attr>$value</textarea>";
 					break;
 				case 'image':
 					$buf .= '<input class="aioseop_upload_image_checker" type="hidden" name="' . $name . '_checker" value="0">' .
 							"<input class='aioseop_upload_image_button button-primary' type='button' value='";
 					$buf .= __( 'Upload Image', 'all-in-one-seo-pack' );
-					$buf .= "' style='float:left;' />" .
-							"<input class='aioseop_upload_image_label' name='$name' type='text' $attr value='$value' size=57 style='float:left;clear:left;'>\n";
+					$buf .= "' />" .
+							"<input class='aioseop_upload_image_label' name='" . esc_attr( $name ) . "' type='text' " . esc_html( $attr ) . " value='" . esc_attr( $value ) . "' size=57 style='float:left;clear:left;'>\n";
 					break;
 				case 'html':
-					$buf .= $value;
+					$allowed_tags          = wp_kses_allowed_html( 'post' );
+					$allowed_tags['input'] = array(
+						'name'        => true,
+						'type'        => true,
+						'value'       => true,
+						'class'       => true,
+						'placeholder' => true,
+					);
+					$buf .= wp_kses( $value, $allowed_tags );
 					break;
 				case 'esc_html':
 					$buf .= '<pre>' . esc_html( $value ) . "</pre>\n";
@@ -2292,8 +2360,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					wp_enqueue_script( 'jquery-ui-datepicker' );
 					// fall through.
 				default:
-					$buf .= "<input name='$name' type='{$options['type']}' $attr value='$value'>\n";
+					$buf .= "<input name='" . esc_attr( $name ) . "' type='" . esc_attr( $options['type'] ) . "' " . wp_kses( $attr, wp_kses_allowed_html( 'data' ) ) . " value='" . esc_attr( $value ) . "'>\n";
 			}
+
+			// TODO Maybe Change/Add a function for SEO character count.
 			if ( ! empty( $options['count'] ) ) {
 				$size = 60;
 				if ( isset( $options['size'] ) ) {
@@ -2316,14 +2386,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 			return $buf;
 		}
 
-		const DISPLAY_HELP_START = '<a class="aioseop_help_text_link" style="cursor:pointer;" title="%s" onclick="toggleVisibility(\'%s_tip\');"><label class="aioseop_label textinput">%s</label></a>';
-		const DISPLAY_HELP_END = '<div class="aioseop_help_text_div" style="display:none" id="%s_tip"><label class="aioseop_help_text">%s</label></div>';
-		const DISPLAY_LABEL_FORMAT = '<span class="aioseop_option_label" style="text-align:%s;vertical-align:top;">%s</span>';
-		const DISPLAY_TOP_LABEL = "</div>\n<div class='aioseop_input aioseop_top_label'>\n";
-		const DISPLAY_ROW_TEMPLATE = '<div class="aioseop_wrapper%s" id="%s_wrapper"><div class="aioseop_input">%s<span class="aioseop_option_input"><div class="aioseop_option_div" %s>%s</div>%s</span><p style="clear:left"></p></div></div>';
-
 		/**
 		 * Format a row for an option on a settings page.
+		 *
+		 * @since ?
+		 * @since 3.0 Added Helper Class for jQuery Tooltips. #1850
 		 *
 		 * @param $name
 		 * @param $opts
@@ -2332,7 +2399,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 		 * @return string
 		 */
 		function get_option_row( $name, $opts, $args ) {
-			$label_text = $input_attr = $help_text_2 = $id_attr = '';
+			$label_text = $input_attr = $id_attr = '';
+
+			require_once( AIOSEOP_PLUGIN_DIR . 'admin/class-aioseop-helper.php' );
+			$info = new AIOSEOP_Helper( get_class( $this ) );
 
 			$align = 'right';
 			if ( $opts['label'] == 'top' ) {
@@ -2342,22 +2412,28 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 				$id_attr .= " id=\"{$opts['id']}_div\" ";
 			}
 			if ( $opts['label'] != 'none' ) {
-				if ( isset( $opts['help_text'] ) ) {
-					$help_text   = sprintf( All_in_One_SEO_Pack_Module::DISPLAY_HELP_START, __( 'Click for Help!', 'all-in-one-seo-pack' ), $name, $opts['name'] );
-					$help_text_2 = sprintf( All_in_One_SEO_Pack_Module::DISPLAY_HELP_END, $name, $opts['help_text'] );
+				$tmp_help_text = $info->get_help_text( $name );
+				if ( isset( $tmp_help_text ) && ! empty( $tmp_help_text ) ) {
+					$display_help = '<a class="aioseop_help_text_link" style="cursor: help;" title="%s"></a><label class="aioseop_label textinput">%s</label>';
+					$help_text    = sprintf( $display_help, $info->get_help_text( $name ), $opts['name'] );
 				} else {
 					$help_text = $opts['name'];
 				}
-				$label_text = sprintf( All_in_One_SEO_Pack_Module::DISPLAY_LABEL_FORMAT, $align, $help_text );
+
+				// TODO Possible remove text align.
+				// Currently aligns to the right when everything is being aligned to the left; which is usually a workaround.
+				$display_label_format = '<span class="aioseop_option_label" style="text-align:%s;vertical-align:top;">%s</span>';
+				$label_text           = sprintf( $display_label_format, $align, $help_text );
 			} else {
 				$input_attr .= ' aioseop_no_label ';
 			}
 			if ( $opts['label'] == 'top' ) {
-				$label_text .= All_in_One_SEO_Pack_Module::DISPLAY_TOP_LABEL;
+				$label_text .= "</div><div class='aioseop_input aioseop_top_label'>";
 			}
 			$input_attr .= " aioseop_{$opts['type']}_type";
 
-			return sprintf( All_in_One_SEO_Pack_Module::DISPLAY_ROW_TEMPLATE, $input_attr, $name, $label_text, $id_attr, $this->get_option_html( $args ), $help_text_2 );
+			$display_row_template = '<div class="aioseop_wrapper%s" id="%s_wrapper"><div class="aioseop_input">%s<span class="aioseop_option_input"><div class="aioseop_option_div" %s>%s</div></span><p style="clear:left"></p></div></div>';
+			return sprintf( $display_row_template, $input_attr, $name, $label_text, $id_attr, $this->get_option_html( $args ) );
 		}
 
 		/**
@@ -2501,12 +2577,17 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							$this->options[ $k ] = urlencode_deep( $this->options[ $k ] );
 							break;
 						case 'textarea':
-							$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
+							// #1363: prevent characters like ampersand in title and description (in social meta module) from getting changed to &amp;
+							if ( ! ( 'opengraph' === $location && in_array( $k, array( 'aiosp_opengraph_hometitle', 'aiosp_opengraph_description' ), true ) ) ) {
+								$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
+							}
 							$this->options[ $k ] = htmlspecialchars( $this->options[ $k ], ENT_QUOTES );
 							break;
 						case 'filename':
 							$this->options[ $k ] = sanitize_file_name( $this->options[ $k ] );
 							break;
+						case 'url':
+							// fall through.
 						case 'text':
 							$this->options[ $k ] = wp_kses_post( $this->options[ $k ] );
 							// fall through.
@@ -2628,7 +2709,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 					if ( ! empty( $message ) && empty( $errors ) ) {
 						echo "<div id=\"message\" class=\"updated fade\"><p>$message</p></div>";
 					}
-?>
+					?>
 					<div id="icon-aioseop" class="icon32"><br></div>
 					<h2><?php echo $name; ?></h2>
 					<div id="dropmessage" class="updated" style="display:none;"></div>
@@ -2653,12 +2734,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Module' ) ) {
 							'page_options'   => array( 'type' => 'hidden', 'value' => 'aiosp_home_description' ),
 							'Submit'         => array(
 								'type'  => 'submit',
-								'class' => 'button-primary',
+								'class' => 'aioseop_update_options_button button-primary',
 								'value' => __( 'Update Options', 'all-in-one-seo-pack' ) . ' &raquo;',
 							),
 							'Submit_Default' => array(
 								'type'  => 'submit',
-								'class' => 'button-secondary',
+								'class' => 'aioseop_reset_settings_button button-secondary',
 								'value' => sprintf( __( 'Reset %s Settings to Defaults', 'all-in-one-seo-pack' ), $name ) . ' &raquo;',
 							),
 						);

@@ -6,7 +6,7 @@
 * Author: OptiReto.com
 * Contributors: theverylastperson
 * Author URI: http://OptiReto.com
-* Version: 1.4.4
+* Version: 1.4.5
 * License: GPL2
 * Code Monkey: Jay Chuck Mailen
 * Bitbucket Plugin URI: https://bitbucket.org/Optimized-Marketing/gforms-export-entries/
@@ -15,7 +15,7 @@
 
 if ( class_exists( 'GFForms' ) ) {
 
-	define( 'GFEE_VER', '1.4.4' );
+	define( 'GFEE_VER', '1.4.5' );
 
 	$plugin_path = plugins_url() . '/gforms-export-entries/';
 	define( 'GFEE_PATH', $plugin_path );

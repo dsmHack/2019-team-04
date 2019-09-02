@@ -1,52 +1,80 @@
-=== Amazon Polly for WordPress ===
+=== Amazon AI Plugin for WordPress ===
 Contributors: awslabs, wpengine, tstachlewski, stevenkword
-Tags: AWS, Amazon Web Services, WP Engine, Cloud, Text-to-Speech, Amazon Polly
+Tags: AWS, Amazon Web Services, WP Engine, Cloud, Text-to-Speech, Amazon Polly, Amazon Translate, Translate, Translation, Podcast, AI
 Requires at least: 3.0.1
 Requires PHP: 5.6
-Tested up to: 4.9
-Stable tag: 2.0.5
+Tested up to: 5.0
+Stable tag: 3.0.6
 License: GPLv3 ONLY
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 
 == Description ==
 
-Create audio version of your posts, translate them into other languages and create podcasts! Amazon Polly is a service that turns text into lifelike speech. With dozens of voices across a variety of languages, you can select the ideal voice and build engaging speech-enabled applications that work in many different countries. The Amazon Polly plugin for WordPress is a sample application that shows how WordPress creators can easily add Text-to-Speech capabilities to written content with Amazon Polly. You can generate an audio feed for text-based content and insert it into an embedded player to increase the accessibility of your WordPress site. The sample code also enables you to publish podcasts directly from your site and make them available for listeners in the form of podcasts. In addition, the plugin allows to translate your text from one language to another using Amazon Translate– which is a neural machine translation service that delivers fast, high-quality, and affordable language translation. Amazon Translate allows you to localize content - such as websites and applications - for international users, and to easily translate large volumes of text efficiently.
+Create audio version of your posts, translate them into other languages and create podcasts! Amazon Polly is a service that turns text into lifelike speech. With dozens of voices across a variety of languages, you can select the ideal voice and build engaging speech-enabled applications that work in many different countries. The Amazon AI plugin for WordPress is a sample application that shows how WordPress creators can easily add Text-to-Speech capabilities to written content with Amazon Polly. You can generate an audio feed for text-based content and insert it into an embedded player to increase the accessibility of your WordPress site. The sample code also enables you to publish podcasts directly from your site and make them available for listeners in the form of podcasts. In addition, the plugin allows to translate your text from one language to another using Amazon Translate– which is a neural machine translation service that delivers fast, high-quality, and affordable language translation. Amazon Translate allows you to localize content - such as websites and applications - for international users, and to easily translate large volumes of text efficiently.
 
 == Installation ==
 
 1. Install this plugin from the ‘Add new Plugin’ option from your WordPress installation.
-2. After you install (and activate) the plugin, go to the ‘Amazon Polly Settings’ tab in your WordPress admin interface and configure the settings for your plugin. You will need to have the Access Key and Secret Key to your own AWS account in order to finish the configuration of the plugin - you can find instructions about obtaining those below.
+2. After you install (and activate) the plugin, go to the ‘Amazon Polly’ and ‘General’ tab in your WordPress admin interface and configure the settings for your plugin. You will need to have the Access Key and Secret Key to your own AWS account in order to finish the configuration of the plugin - you can find instructions about obtaining those below.
 2.1 If you deployed WordPress on EC2, you can also use the IAM Roles functionality for the pluin - in this case you won’t need to provide the keys on the configuration page. For more details please visit: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html.
 
 == Configuration ==
 The list below presents configurations options which can be modified by the user.
 
-General:
-- AWS access key: the access key which is required to connect to AWS.
-- AWS secret key: the secret key which is required to connect to AWS.
-- AWS Region: The AWS region which will be used to convert content into audio and to store the data (if S3 storage is selected). In most cases, you should choose the region closest to your readers.
+Tab “General”
 
-Amazon Polly settings:
+General configuration:
+- AWS access key: The access key which is required to connect to AWS.
+- AWS secret key: The secret key which is required to connect to AWS.
+- AWS Region: The AWS region which will be used to convert content into audio and to store the data (if S3 storage is selected). In most cases, you should choose the region closest to your readers.
+- Source language: The language in which the content is written.
+
+Cloud storage:
+- Store audio in Amazon S3: If you want to store audio files using the Amazon S3 service instead of on the WordPress server, choose this option. For additional information and pricing, see: https://aws.amazon.com/s3.
+- Amazon CloudFront (CDN) domain name: If you want to broadcast your audio files with Amazon CloudFront, provide the name of your CloudFront domain, which the plugin will use for streaming audio. You must first create the domain in Amazon CloudFront
+
+Other settings:
+- Post types: Specifies on which type of WordPress page plugin will be used. The default value is ‘posts’
+- Display "Powered by AWS": This option let you to choose if you want to display Display by AWS logo on your website or (otherwise) add it to the content (like audio) which will be generated by the plugin
+- Enable logging: Specifies if detailed pluging logging should be enabled.
+- Skip tags: Allows to specify tags (for example audio) for which audio won't be generated.
+
+
+
+Tab “Text-To-Speech”
+
+Amazon Polly configurations:
+- Enable text-to-speech support: specify if text-to-speech functionality should be enabled.
 - Sample rate:  The sample rate of the audio files that will be generated, in Hz. Higher sampling rates mean higher quality audio.
 - Voice name: The Amazon Polly voice to use to create the audio file.
 - Automated breaths: If enabled, Amazon Polly automatically creates breathing noises at appropriate intervals.
 - Enable SSML Support: If enabled, you can add SSML tags to your post content.
-- Audio speed: The speed at which your audio files are recorded, proportional to the natural speed of your preferred voice.  100% is the default value; minimum is 20% and maximum is 200%.
 - Lexicons: The names of lexicons used for audio generation. These lexicons must already be uploaded to your AWS account to be used.
+- Audio speed: The speed at which your audio files are recorded, proportional to the natural speed of your preferred voice.  100% is the default value; minimum is 20% and maximum is 200%.
 
 Player settings:
 - Player position: The position of the audio player on your WordPress page. You can put it before or after the post, or not use it at all. If you want to make your files available using Amazon Pollycast, choose to not display the audio player.
-- Player Label: Specifies optional text that will be shown above the audio player. HTML tags are supported with this label.
+- Player label: Specifies optional text that will be shown above the audio player. HTML tags are supported with this label.
 - New post default: Specifies whether Amazon Polly is automatically enabled for all new posts. Choose this option if you want Amazon Polly to use the configuration settings to create an audio file for each new post.
 - Autoplay: Specifies whether the audio player automatically starts playing the audio when a user visits an individual post on the website.
-- Feed size: Number of items (posts/pages) which will be shown in RSS feed. Max value is 1000.
 
-Cloud Storage:
-- Store audio in Amazon S3: If you want to store audio files using the Amazon S3 service instead of on the WordPress server, choose this option. For additional information and pricing, see: https://aws.amazon.com/s3.
-- Amazon CloudFront (CDN) domain name: If you want to broadcast your audio files with Amazon CloudFront, provide the name of your CloudFront domain, which the plugin will use for streaming audio. You must first create the domain in Amazon CloudFront
+Additional Configuration
+- Bulk update: Specifies whether you want to bulk update all posts to use new plugin settings.The bulk update functionality doesn't use translate functionality of the plugin.
+- Add post title to audio: If enabled, each audio file will start from post title.
+- Add post excerpt to audio: If enabled, each audio file will have an excerpt from the post at the beginning of the audio.
+- Enable Media Library support: Specifies if audio files should be added to WP media library.
 
-Amazon Pollycast:
+Tab “Translate”
+
+Amazon Translate configuration:
+- Enable translation support: Specifies whether the content translation functionality will be enabled.
+- Enable audio for translations: Specifies if text-to-speech functionality should be used for translated content.
+- Target languages: Defines a list of the available languages into which the WordPress content can be translated (and for which the audio will also be generated).
+
+Tab “Podcast”
+
+Amazon Pollycast configuration:
 - Podcast enabled: If enabled, the Amazon Polly WordPress plugin will create an XML feed that can then be consumed by ITunes or other applications to generate a podcast.
 - iTunes category: The category for your podcast. Choosing a category makes it easier for podcast users to find your podcast in the ITunes podcast catalog.
 - iTunes explicit: Specifies whether to the Amazon Pollycast contains explicit content.
@@ -54,21 +82,7 @@ Amazon Pollycast:
 - iTunes email: Specifies the contact email for the podcast with ITunes.
 - Feed size: Number of items (posts/pages) which will be shown in RSS feed. Max value is 1000.
 - Post category: category of posts which will be added to RSS feed. If field is empty, all posts will be added. You can specify multiple category, separated by comma. Example of values: "personal", "personal,business"
-- Use HTTPS for audio files: Specify if HTTPS protocol should be used in links to audio files in RSS Feed.
 
-Additional Configuration
-- Bulk update: Specifies whether you want to bulk update all posts to use new plugin settings.The bulk update functionality doesn't use translate functionality of the plugin.
-- Add post title to audio: If enabled, each audio file will start from post title.
-- Add post excerpt to audio: If enabled, each audio file will have an excerpt from the post at the beginning of the audio.
-- Post Types: Specifies which type of WordPress page will be converted to audio files.
-
-Amazon Translate configuration
-- Enable translation support: Specifies whether the content translation functionality will be enabled.
-- Show transcript: If enabled, reader will be able to see the translated transcript of the post in other languages.
-- Source language: Specifies the original source language in which the content was written.
-- Source language label: Defines a label for the original source language.
-- Translations label: Specifies the label which will be shown next to available languages.
-- Target languages: Defines a list of the available languages into which the WordPress content can be translated (and for which the audio will also be generated).
 
 == How to obtain AWS Access Key and Secret Key? ==
 1. If you don't already have an AWS Account, go to https://aws.amazon.com/ to create one.
@@ -171,7 +185,7 @@ No. All audio files are being preserved. Depending on your configuration, they w
 
 Amazon Polly itself support multiple SSML tags (You can find more about them here: https://docs.aws.amazon.com/polly/latest/dg/ssml.html).
 
-The Amazon Polly Plugin currently supports only the <break> SSML tag (you can find more about it at this page: https://docs.aws.amazon.com/polly/latest/dg/supported-ssml.html).
+The Amazon AI Plugin currently supports only the <break> SSML tag (you can find more about it at this page: https://docs.aws.amazon.com/polly/latest/dg/supported-ssml.html).
 
 To use SSML tags, you will need to enable Amazon S3 as the storage location for your files and enable SSML support in the plugin configuration page. In the wizard for creating a new WordPress post, you will be able to add ssml tags. An example of content with the SSML break tag is:
 
@@ -215,31 +229,63 @@ Pronunciation lexicons enable you to customize the pronunciation of words. In th
 2. When generating text-based content, the user can also produce a voiced version of the same content by activating Amazon Polly.
 3. After activation of the plugin, each voiced section will have its own play button, which will allow the end user to listen to the content.
 
-== What is "Audio Only" functionality? ==
-
-If you want to add something to the audio but you don't want to display it in the browser, you use the -AMAZONPOLLY-ONLYAUDIO- tag. For example:
-
--AMAZONPOLLY-ONLYAUDIO-START-
-
-[Text that will be read by the plugin but not shown in the browser.]
-
--AMAZONPOLLY-ONLYAUDIO-END-
-
-Important: Text will be shown in transcript if translate functionality is enabled, even if it was marked as "Audio Only".
-
-== What is "Words Only" functionality? ==
-
-If you have a piece of content that you want on your page but not read by the plugin, you use the -AMAZONPOLLY-ONLYWORDS- tag. For example:
-
--AMAZONPOLLY-ONLYWORDS-START-
-
-[Text that will be shown in the browser but not read by the plugin.]
-
--AMAZONPOLLY-ONLYWORDS-END-
-
-Important: Text will be read in translated audio files if translate functionality is enabled, even if it was marked as "Words Only".
-
 == Changelog ==
+
+= 3.0.6 =
+* Added translate support for Hindi, Farsi, Malay, and Norwegian languages.
+
+= 3.0.5 =
+* Added support for Arabic Language
+* Bug Fixing
+
+= 3.0.3 =
+* Added detailed logging
+
+= 3.0.2 =
+* Added Podcast Title and Description in options to customize the feed.
+
+= 3.0.1 =
+* Bug Fixing.
+
+= 3.0.0 =
+* Alexa Integration added.
+
+= 2.6.4 =
+* Bug fixing.
+* Plugin Renaming.
+
+= 2.6.3 =
+* Added possibility to specify combination of label and flag to be displayed with translations.
+* Added possibility to add 'Subscribe' Button on the page
+* Added possibility to disable 'download' button for audio files.
+
+= 2.6.2 =
+* Added possibility to specify tags, which won't be read (for example 'audio'). This option is available under 'Text-To-Speech' tab as 'Skip tags' option.
+* Cleaning WordPress options when plugin is uninstalled.
+
+= 2.6.1 =
+* Added support for 8 new languages for translate functionality.
+* Changed the way how audio is being generate (background process).
+* Added a way of enabling plugin logging.
+
+= 2.6.0 =
+* Fix problem with media library.
+
+= 2.5.7 =
+* Bug fixing.
+
+= 2.5.5 =
+* Added possibility of converting Chinese text to audio.
+* Added possibility to specify label instead of flag when translating text.
+* Added possibility to specify podcast author.
+* Bug fixing.
+
+= 2.5.1-4 =
+* Bug fixing.
+
+= 2.5.0 =
+* Bug fixing.
+* Redesign GUI.
 
 = 2.0.5 =
 * Added possibility to use HTTPS in RSS Feed.

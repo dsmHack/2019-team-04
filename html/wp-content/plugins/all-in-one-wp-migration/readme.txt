@@ -2,9 +2,9 @@
 Contributors: yani.iliev, bangelov, pimjitsawang
 Tags: move, transfer, copy, migrate, backup, clone, restore, db migration, wordpress migration, website migration, database export, database import, apoyo, sauvegarde, di riserva, バックアップ
 Requires at least: 3.3
-Tested up to: 5.1
+Tested up to: 5.2
 Requires PHP: 5.2.17
-Stable tag: 6.85
+Stable tag: 6.97
 License: GPLv2 or later
 
 Move, transfer, copy, migrate, and backup a site with 1-click. Quick, easy, and reliable.
@@ -108,6 +108,91 @@ Alternatively you can download the plugin using the download button on this page
 All-in-One WP Migration **asks for your consent** to collect **requester's email address** when filling plugin's contact form. [GDPR Compliant Privacy Policy](https://www.iubenda.com/privacy-policy/946881)
 
 == Changelog ==
+= 6.97 =
+**Added**
+
+* ARIA support
+
+**Fixed**
+
+* Download button position
+
+= 6.96 =
+**Fixed**
+
+* Delete failed import/exports older than 24 hours
+
+= 6.95 =
+**Changed**
+
+* Remove the cleanup of failed imports. It causes some of the imports to fail
+
+= 6.94 =
+**Fixed**
+
+* Decrease memory use during export and import of the database
+* Wait 5 seconds longer for servers to process export/import jobs
+
+**Changed**
+
+* Removed emoticon from Import success screen
+
+= 6.93 =
+**Changed**
+
+* Simplified the text on successful import
+* Improved the speed of exporting the database
+
+**Removed**
+
+* Feedback option from the sidebar
+
+= 6.92 =
+**Added**
+
+* Workaround for PHP 7.3.2 bug when database export uses more memory https://bugs.php.net/bug.php?id=77597
+
+= 6.91 =
+**Changed**
+
+* Reverted monkey-patched fix for some GoDaddy hosting plans. The issue was fixed by GoDaddy yesterday
+
+= 6.90 =
+**Changed**
+
+* Improved URL replacement
+* Improved compatibility with some of GoDaddy hosting plans
+
+= 6.89 =
+**Changed**
+
+* Tested up to WordPress 5.1
+
+= 6.88 =
+**Fixed**
+
+* Table data type issue on export/import
+* PHP notice on custom backup labels
+
+= 6.87 =
+**Added**
+
+* Custom backup labels on Backups page
+* Support for OptimizePress
+
+**Fixed**
+
+* Translation text on Import page
+
+= 6.86 =
+**Added**
+
+* Support for MySQL BIT field type
+
+**Fixed**
+
+* WP CLI issue on export/import
+
 = 6.85 =
 **Changed**
 

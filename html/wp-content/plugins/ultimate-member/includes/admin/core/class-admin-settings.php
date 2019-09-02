@@ -492,7 +492,13 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 									'id'       		=> 'account_email',
 									'type'     		=> 'checkbox',
 									'label'   		=> __( 'Allow users to change e-mail','ultimate-member' ),
-									'tooltip' 	=> __('Whether to allow users changing their email in account page.','ultimate-member'),
+									'tooltip' 	=> __( 'Whether to allow users changing their email in account page.', 'ultimate-member' ),
+								),
+								array(
+									'id'        => 'account_general_password',
+									'type'      => 'checkbox',
+									'label'     => __( 'Password is required?','ultimate-member' ),
+									'tooltip'   => __( 'Password is required to save account data.', 'ultimate-member' ),
 								),
 								array(
 									'id'       		=> 'account_hide_in_directory',
@@ -1060,6 +1066,22 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 							'type'      => 'checkbox',
 							'label'     => __( 'Disable Cache User Profile', 'ultimate-member' ),
 							'tooltip'   => __( 'Check this box if you would like to disable Ultimate Member user\'s cache.', 'ultimate-member' ),
+						),
+						array(
+							'id'        => 'enable_blocks',
+							'type'      => 'checkbox',
+							'label'     => __( 'Enable Gutenberg Blocks', 'ultimate-member' ),
+							'tooltip'   => __( 'Check this box if you would like to use Ultimate Member blocks in Gutenberg editor. Important some themes have the conflicts with Gutenberg editor.', 'ultimate-member' ),
+						),
+						array(
+							'id'        => 'rest_api_version',
+							'type'      => 'select',
+							'label'     => __( 'REST API version','ultimate-member' ),
+							'tooltip'   => __( 'This controls the REST API version, we recommend to use the last version', 'ultimate-member' ),
+							'options'   => array(
+								'1.0'   => __( '1.0 version', 'ultimate-member' ),
+								'2.0'   => __( '2.0 version', 'ultimate-member' ),
+							),
 						),
 						array(
 							'id'       		=> 'uninstall_on_delete',
@@ -1681,9 +1703,9 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 				);
 
 				$request = wp_remote_post(
-					'https://ultimatemember.com/',
+					UM()->store_url,
 					array(
-						'timeout'   => 15,
+						'timeout'   => UM()->request_timeout,
 						'sslverify' => false,
 						'body'      => $api_params
 					)
@@ -1710,8 +1732,9 @@ if ( ! class_exists( 'um\admin\core\Admin_Settings' ) ) {
 			$email_key = empty( $_GET['email'] ) ? '' : urldecode( $_GET['email'] );
 			$emails = UM()->config()->email_notifications;
 
-			if ( empty( $email_key ) || empty( $emails[$email_key] ) )
+			if ( empty( $email_key ) || empty( $emails[ $email_key ] ) ) {
 				include_once um_path . 'includes/admin/core/list-tables/emails-list-table.php';
+			}
 		}
 
 
@@ -2286,7 +2309,6 @@ Use Gravatars: 				<?php echo $this->info_value( UM()->options()->get('use_grava
 <?php if( UM()->options()->get('use_gravatars') ): ?>Gravatar builtin image:		<?php  echo UM()->options()->get('use_um_gravatar_default_builtin_image') . "\n"; ?>
     UM Avatar as blank Gravatar: 	<?php echo $this->info_value( UM()->options()->get('use_um_gravatar_default_image'), 'yesno', true ); ?><?php endif; ?>
 Require a strong password: 	<?php echo $this->info_value( UM()->options()->get('reset_require_strongpass'), 'onoff', true ); ?>
-Editable primary email field in profile view:	<?php echo $this->info_value( UM()->options()->get('editable_primary_email_in_profile'), 'onoff', true ); ?>
 
 
 --- UM Access Configuration ---
@@ -2568,7 +2590,9 @@ Use Only Cookies:         			<?php echo ini_get( 'session.use_only_cookies' ) ? 
 
 			$theme_template_path = UM()->mail()->get_template_file( 'theme', $template );
 
-			UM()->mail()->copy_email_template( $template );
+			if ( ! file_exists( $theme_template_path ) ) {
+				UM()->mail()->copy_email_template( $template );
+			}
 
 			$fp = fopen( $theme_template_path, "w" );
 			$result = fputs( $fp, $content );

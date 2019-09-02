@@ -26,10 +26,14 @@ do_action( 'rss_tag_pre', 'rss2' );
 $podcast_icon = $amazon_pollycast->get_podcast_icon();
 
 // iTunes
-$itunes_email    = $amazon_pollycast->get_itunes_email();
-$itunes_category = $amazon_pollycast->get_itunes_category();
-$itunes_explicit = $amazon_pollycast->get_itunes_explicit();
+$itunes_email       = $amazon_pollycast->get_itunes_email();
+$itunes_category    = $amazon_pollycast->get_itunes_category();
+$itunes_explicit    = $amazon_pollycast->get_itunes_explicit();
+$itunes_title       = $amazon_pollycast->get_itunes_title();
 $itunes_description = $amazon_pollycast->get_itunes_description();
+
+$common = new AmazonAI_Common();
+$itunes_author = $common->get_podcast_author();
 
 ?>
 <rss version="2.0"
@@ -52,23 +56,23 @@ $itunes_description = $amazon_pollycast->get_itunes_description();
 >
 
 <channel>
-	<title><?php wp_title_rss(); ?></title>
+	<title><?php echo esc_attr($itunes_title); ?></title>
 	<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
 	<link><?php bloginfo_rss( 'url' ); ?></link>
-	<description><?php	echo esc_attr($itunes_description); ?></description>
+	<description><?php echo esc_attr($itunes_description); ?></description>
 	<image>
 		<url><?php echo esc_url( $podcast_icon ); ?></url>
-		<title><?php wp_title_rss(); ?></title>
+		<title><?php echo esc_attr($itunes_title); ?></title>
 		<link><?php bloginfo_rss( 'url' ); ?></link>
 	</image>
 	<itunes:owner>
-		<itunes:name><?php wp_title_rss(); ?></itunes:name>
+		<itunes:name><?php echo $itunes_author; ?></itunes:name>
 		<itunes:email><?php echo $amazon_pollycast->get_itunes_email(); ?></itunes:email>
 	</itunes:owner>
 	<itunes:category text="<?php echo esc_attr( $itunes_category ); ?>"></itunes:category>
 	<itunes:explicit><?php echo esc_html( $itunes_explicit ); ?></itunes:explicit>
 	<itunes:image href="<?php echo esc_url( $podcast_icon ); ?>"/>
-	<itunes:author><?php wp_title_rss(); ?></itunes:author>
+	<itunes:author><?php echo $itunes_author; ?></itunes:author>
 	<itunes:summary><?php	echo esc_attr($itunes_description); ?></itunes:summary>
 	<itunes:subtitle><?php	echo esc_attr($itunes_description); ?></itunes:subtitle>
 	<copyright><?php echo esc_html( $amazon_pollycast->get_copyright() ); ?></copyright>
