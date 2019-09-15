@@ -71,4 +71,56 @@ function save_my_custom_form_setting($form) {
     return $form;
 }
 
+/*
+add_action("gform_after_update_entry","adjust_associated_user",10,3);
+function adjust_associated_user($form, $entry_id, $original_entry) {
+
+    echo "<pre>";
+    var_dump($entry_id);
+    var_dump($original_entry);
+    echo "</pre>";
+    die();
+}
+*/
+
+
+add_action( 'gform_after_submission', 'set_post_content', 10, 2 );
+function set_post_content( $entry, $form ) {
+
+    $userId = array_reduce($form['fields'],function($acc,$cur) use ($entry) {
+        if ($cur->label == "uid") {
+            if (array_key_exists($cur->id,$entry)) {
+                $acc = $entry[$cur->id];
+            }
+        }
+        return $acc;
+    },null);
+
+    /*
+    echo "<pre>";
+    var_dump($userId);
+    var_dump($entry);
+    var_dump($form);
+    echo "</pre>";
+    die();
+    */
+
+    if ($userId) {
+        $entry['created_by'] = $userId;
+        GFAPI::update_entry($entry);
+    }
+
+ 
+    /*
+    //getting post
+    $post = get_post( $entry['post_id'] );
+ 
+    //changing post content
+    $post->post_content = 'Blender Version:' . rgar( $entry, '7' ) . "<br/> <img src='" . rgar( $entry, '8' ) . "'> <br/> <br/> " . rgar( $entry, '13' ) . " <br/> <img src='" . rgar( $entry, '5' ) . "'>";
+ 
+    //updating post
+    wp_update_post( $post );
+    */
+}
+
 ?>

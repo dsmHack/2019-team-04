@@ -231,7 +231,7 @@ function render_report_details($userEnrollment) {
                 <?php if ($userEnrollment->hasCompletedForm($form['id'])): ?>
                 ✅
                 <?php else: ?>
-                ❌
+                ❌ <a href="/?gf_page=preview&id=<?php echo $form['id']; ?>&uid=<?php echo $userEnrollment->getId(); ?>" target="_blank">Submit Form</a>
                 <?php endif; ?>
             </li>
         <?php endforeach; ?>
