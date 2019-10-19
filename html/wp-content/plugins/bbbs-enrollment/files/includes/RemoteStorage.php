@@ -7,15 +7,16 @@ class RemoteStorage {
 
     protected $s3;
 
-    public function __construct() {
+    public function __construct($config) {
 
+        /*
         $config = array(
             "region" => "us-east-2",
-            "key" => "AKIA6HR35GUCRI3ZQLKR",
-            "secret" => "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",
+            "key" => "",
+            "secret" => "",
             "bucket" => "bbbs-document-storage-bucket"
         );
-
+        */
 
         $this->s3 = new Aws\S3\S3Client([
             'region'  => $config['region'],

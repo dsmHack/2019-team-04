@@ -116,7 +116,13 @@ function set_post_content( $entry, $form ) {
 
     if (count($fileUploadFields) > 0) {
         $basePath = ABSPATH;
-        $rs = new RemoteStorage();
+        $config = array(
+            "region" => S3_UPLOADS_REGION,
+            "key" => S3_UPLOADS_KEY,
+            "secret" => S3_UPLOADS_SECRET,
+            "bucket" => S3_UPLOADS_BUCKET
+        );
+        $rs = new RemoteStorage($config);
 
         $user = get_user_by('id',$userId);
 
