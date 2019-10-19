@@ -9,6 +9,8 @@ wp-content/*
 
 wp-config.php
 
+vendor/
+
 # Hidden system files
 *.DS_Store
 *[Tt]humbs.db
