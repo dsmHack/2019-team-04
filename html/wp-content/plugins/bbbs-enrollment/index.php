@@ -7,7 +7,9 @@ require_once(__DIR__ . "/files/bbbs-admin-reporting.php");
 require_once(__DIR__ . "/files/bbbs-enrollment.php");
 require_once(__DIR__ . "/files/bbbs-install.php");
 require_once(__DIR__ . "/files/bbbs-status.php");
+require_once(__DIR__ . "/files/includes/RemoteStorage.php");
 
+require_once(__DIR__ . "/../../../../vendor/autoload.php");
 
 register_activation_hook( __FILE__, 'bbbs_install' );
 add_shortcode( 'enrollmentstatus', 'enrollment_status' );
@@ -96,8 +98,51 @@ function set_post_content( $entry, $form ) {
         return $acc;
     },null);
 
+
+    if ($userId) {
+        $entry['created_by'] = $userId;
+        GFAPI::update_entry($entry);
+    }
+
+    // handle remote file upload
+
+
+
+    // get all fileupload fields
+    $fileUploadFields = array_filter($form['fields'], function($cur) {
+        return $cur->type == "fileupload";
+    });
+
+
+    if (count($fileUploadFields) > 0) {
+        $basePath = ABSPATH;
+        $rs = new RemoteStorage();
+
+        $user = get_user_by('id',$userId);
+
+        $keyPrefix = $userId . "-" . $user->display_name . "/" . $form['title'];
+
+        foreach ($fileUploadFields as $field) {
+            $id = $field->id;
+
+            $entryValue = $entry[$id];
+            $localPath = $basePath . substr($entryValue,strpos($entryValue,"wp-content"));
+
+            if (file_exists($localPath)) {
+                $s3Url = $rs->transfer($localPath,$keyPrefix);
+                if ($s3Url !== false) {
+                    $entry[$id] = $s3Url;
+                    unlink($localPath);
+                }
+            }
+        }
+    }
+
     /*
     echo "<pre>";
+
+    var_dump($fileUploadFields);
+
     var_dump($userId);
     var_dump($entry);
     var_dump($form);
@@ -105,11 +150,10 @@ function set_post_content( $entry, $form ) {
     die();
     */
 
-    if ($userId) {
-        $entry['created_by'] = $userId;
-        GFAPI::update_entry($entry);
-    }
-
+    /*
+    use ->id to get the value from the entry
+    index 2,  ->type == "fileupload"
+    */
  
     /*
     //getting post
