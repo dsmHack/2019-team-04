@@ -124,9 +124,13 @@ function set_post_content( $entry, $form ) {
         );
         $rs = new RemoteStorage($config);
 
-        $user = get_user_by('id',$userId);
+        if ($userId) {
+            $user = get_user_by('id',$userId);
+        } else {
+            $user = wp_get_current_user();
+        }
 
-        $keyPrefix = $userId . "-" . $user->display_name . "/" . $form['title'];
+        $keyPrefix = $user->ID . "-" . $user->display_name . "/" . $form['title'];
 
         foreach ($fileUploadFields as $field) {
             $id = $field->id;
@@ -138,6 +142,7 @@ function set_post_content( $entry, $form ) {
                 $s3Url = $rs->transfer($localPath,$keyPrefix);
                 if ($s3Url !== false) {
                     $entry[$id] = $s3Url;
+                    GFAPI::update_entry($entry);
                     unlink($localPath);
                 }
             }
